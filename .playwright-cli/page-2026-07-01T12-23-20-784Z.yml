@@ -1,0 +1,40 @@
+- main [ref=e2]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: HCMUS GPA v1 • responsive web app cho 1 sinh vien
+      - generic [ref=e7]:
+        - heading "Theo doi GPA, tien do tot nghiep, va ke hoach hoc ky bang du lieu that." [level=1] [ref=e8]
+        - paragraph [ref=e9]: Ung dung duoc thiet ke cho sinh vien HCMUS khoa 2024, seed 4 CTDT tu docs, luu du lieu qua Supabase, va tach han khoi demo local state.
+      - generic [ref=e10]:
+        - link "Dang nhap de bat dau" [ref=e11] [cursor=pointer]:
+          - /url: /auth
+        - link "Vao app neu da co session" [ref=e12] [cursor=pointer]:
+          - /url: /app
+    - generic [ref=e14]:
+      - paragraph [ref=e15]: Co gi trong v1
+      - generic [ref=e16]:
+        - generic [ref=e17]: Dong bo profile, diem, planner, va tong hop GPA bang Supabase thuc.
+        - generic [ref=e18]: Tinh GPA he 10 va he 4 theo quy doi 2024 trong docs, cap nhat ngay khi ban sua diem.
+        - generic [ref=e19]: Theo doi curriculum theo nhom kien thuc, canh bao mon rot, va goi y hoc ky tiep theo.
+  - generic [ref=e20]:
+    - generic [ref=e21]:
+      - paragraph [ref=e22]: Seed curriculum
+      - heading "4 CTDT khoa 2024 duoc dua vao schema Supabase." [level=2] [ref=e23]
+      - paragraph [ref=e24]: "App dung schema `programs`, `course_groups`, `courses`, `course_prerequisites`, `student_profiles`, `student_course_records`, `term_plans`, va `term_plan_courses`. Runtime khong doc PDF; docs chi dung cho pipeline seed lap lai."
+    - generic [ref=e25]:
+      - article [ref=e26]:
+        - generic [ref=e28]:
+          - paragraph [ref=e29]: Ma nganh 7480201
+          - heading "Cong nghe thong tin" [level=3] [ref=e30]
+      - article [ref=e31]:
+        - generic [ref=e33]:
+          - paragraph [ref=e34]: Ma nganh 7480101
+          - heading "Khoa hoc may tinh" [level=3] [ref=e35]
+      - article [ref=e36]:
+        - generic [ref=e38]:
+          - paragraph [ref=e39]: Ma nganh 7480103
+          - heading "Ky thuat phan mem" [level=3] [ref=e40]
+      - article [ref=e41]:
+        - generic [ref=e43]:
+          - paragraph [ref=e44]: Ma nganh 7480104
+          - heading "He thong thong tin" [level=3] [ref=e45]

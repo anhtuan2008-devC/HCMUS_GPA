@@ -1,0 +1,19 @@
+---
+description: HCMUS GPA product, architecture, Supabase and UI rules
+globs:
+  - "**/*.{ts,tsx,sql,css}"
+alwaysApply: true
+---
+
+# HCMUS GPA Rules
+
+- UI copy for students must be Vietnamese with accents, warm, natural and non-technical.
+- Keep implementation identifiers, database keys and enum values ASCII.
+- Prefer Server Components for route data; keep client components as focused interaction leaves.
+- Authenticate all server mutations and rely on Supabase RLS for user-owned rows.
+- Do not create parallel mutation paths for the same feature; API routes and future Server Actions must delegate to shared data logic.
+- GPA is calculated from effective course attempts only; attempts preserve retake and improvement history.
+- GPA hệ 10 is stored and displayed with three decimal places; GPA hệ 4 stays two decimal places.
+- Search over curriculum text must be accent-insensitive.
+- Motion must communicate state or guide attention, use opacity/transform/SVG stroke, and respect `prefers-reduced-motion`.
+- Avoid exposing implementation terms such as schema, seed, SSR, production or Supabase in student-facing screens unless it is an error meant for developers.

@@ -1,0 +1,35 @@
+- generic [active] [ref=f1e1]:
+  - main [ref=f1e2]:
+    - generic [ref=f1e3]:
+      - generic [ref=f1e4]:
+        - generic [ref=f1e5]: Auth + persistence that
+        - heading "Dang nhap de chuyen workspace GPA tu demo sang production." [level=1] [ref=f1e6]
+        - paragraph [ref=f1e7]: "Sau khi login, app se doc session cookie SSR, kiem tra `student_profile`, va dua ban vao onboarding hoac workspace chinh tuong ung."
+      - generic [ref=f1e8]:
+        - generic [ref=f1e9]:
+          - button "Dang nhap" [ref=f1e10]
+          - button "Tao tai khoan" [ref=f1e11]
+        - generic [ref=f1e12]:
+          - generic [ref=f1e13]:
+            - generic [ref=f1e14]: Email
+            - textbox "Email" [ref=f1e15]:
+              - /placeholder: ban@hcmus.edu.vn
+              - text: codex.qa.user@gmail.com
+          - generic [ref=f1e16]:
+            - generic [ref=f1e17]: Mat khau
+            - textbox "Mat khau" [ref=f1e18]:
+              - /placeholder: Toi thieu 6 ky tu
+              - text: Codex123!
+          - button "Dang nhap" [ref=f1e34]
+        - paragraph [ref=f1e20]:
+          - text: Chua muon dang nhap?
+          - link "Quay lai landing page" [ref=f1e21] [cursor=pointer]:
+            - /url: /
+  - button "Open Next.js Dev Tools" [ref=f1e35] [cursor=pointer]:
+    - generic [ref=f1e38]:
+      - text: Rendering
+      - generic [ref=f1e39]:
+        - generic [ref=f1e40]: .
+        - generic [ref=f1e41]: .
+        - generic [ref=f1e42]: .
+  - alert [ref=f1e31]

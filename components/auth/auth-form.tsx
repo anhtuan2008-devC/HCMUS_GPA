@@ -1,0 +1,225 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
+import { Button, Field, TextInput } from "@/components/ui";
+import { DEFAULT_APP_PATH } from "@/lib/app-routes";
+
+type AuthMode = "sign-in" | "sign-up";
+
+function friendlyAuthError(message: string) {
+  const normalized = message.toLowerCase();
+
+  if (normalized.includes("invalid login")) {
+    return "Email hoặc mật khẩu chưa đúng. Bạn kiểm tra lại giúp mình nhé.";
+  }
+
+  if (normalized.includes("password")) {
+    return "Mật khẩu cần có ít nhất 6 ký tự.";
+  }
+
+  if (normalized.includes("email")) {
+    return "Email chưa hợp lệ hoặc cần được xác nhận trước khi đăng nhập.";
+  }
+
+  return "Có một trục trặc nhỏ khi xử lý đăng nhập. Bạn thử lại sau vài giây nhé.";
+}
+
+export function AuthForm({
+  initialMode = "sign-in",
+}: Readonly<{
+  initialMode?: AuthMode;
+}>) {
+  const router = useRouter();
+  const [mode, setMode] = useState<AuthMode>(initialMode);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [infoMessage, setInfoMessage] = useState<string | null>(null);
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setIsSubmitting(true);
+    setErrorMessage(null);
+    setInfoMessage(null);
+
+    try {
+      const response = await fetch("/api/auth/password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          mode,
+          email,
+          password,
+        }),
+      });
+      const payload = (await response.json()) as {
+        message?: string;
+        hasSession?: boolean;
+      };
+
+      if (!response.ok) {
+        setErrorMessage(payload.message ?? friendlyAuthError(""));
+        return;
+      }
+
+      if (payload.hasSession) {
+        router.replace(DEFAULT_APP_PATH);
+        router.refresh();
+        return;
+      }
+
+      setInfoMessage(
+        payload.message ??
+          "Nếu cần xác nhận email, bạn mở hộp thư rồi quay lại đăng nhập nhé.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  function changeMode(nextMode: AuthMode) {
+    setMode(nextMode);
+    router.replace(nextMode === "sign-up" ? "/dang-ky" : "/dang-nhap");
+  }
+
+  return (
+    <main className="mx-auto flex min-h-screen w-full max-w-7xl items-center px-4 py-8 sm:px-6 lg:px-8">
+      <div className="grid w-full gap-6 lg:grid-cols-[1.05fr_minmax(23.75rem,0.9fr)]">
+        <section className="sidebar-shell motion-page relative hidden overflow-hidden rounded-[2.5rem] p-10 text-white lg:block">
+          <div className="absolute -right-12 top-16 h-48 w-48 rounded-full bg-white/10 blur-3xl" />
+          <div className="inline-flex rounded-[1.4rem] border border-white/15 bg-white/10 px-4 py-3">
+            <Image
+              src="/brand/hcmus-logo-white.png"
+              alt="Logo Trường Đại học Khoa học tự nhiên, ĐHQG-HCM"
+              width={180}
+              height={54}
+              className="h-12 w-auto object-contain"
+              priority
+            />
+          </div>
+          <h1 className="mt-8 max-w-2xl font-[family-name:var(--font-display)] text-5xl font-bold leading-tight">
+            Bắt đầu không gian học tập cá nhân của bạn.
+          </h1>
+          <p className="mt-5 max-w-xl text-base leading-8 text-white/72">
+            Mỗi lần cập nhật điểm là một lần bạn nhìn rõ hơn chặng đường phía trước:
+            GPA hiện tại, tín chỉ còn thiếu và kế hoạch học kỳ tiếp theo.
+          </p>
+          <div className="mt-10 grid gap-3">
+            <div className="rounded-2xl border border-white/12 bg-white/10 px-4 py-4">
+              <ShieldCheck className="h-5 w-5 text-blue-100" />
+              <p className="mt-3 text-sm leading-6 text-white/78">
+                Dữ liệu học tập của bạn được lưu riêng cho tài khoản của bạn.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-white/12 bg-white/10 px-4 py-4">
+              <Sparkles className="h-5 w-5 text-blue-100" />
+              <p className="mt-3 text-sm leading-6 text-white/78">
+                Giao diện tập trung vào hành động tiếp theo, không bắt bạn đọc những phần rườm rà.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section className="soft-card motion-card rounded-[2.5rem] p-6 sm:p-8">
+          <div className="flex items-center gap-2 rounded-full border border-[var(--line)] bg-white/75 p-1">
+            <button
+              type="button"
+              onClick={() => changeMode("sign-in")}
+              className={`flex-1 rounded-full px-4 py-2 text-sm font-semibold transition ${
+                mode === "sign-in"
+                  ? "bg-[var(--brand-primary)] text-white shadow-[0_10px_28px_rgba(0,63,136,0.24)]"
+                  : "text-[var(--muted)] hover:bg-white"
+              }`}
+            >
+              Đăng nhập
+            </button>
+            <button
+              type="button"
+              onClick={() => changeMode("sign-up")}
+              className={`flex-1 rounded-full px-4 py-2 text-sm font-semibold transition ${
+                mode === "sign-up"
+                  ? "bg-[var(--brand-primary)] text-white shadow-[0_10px_28px_rgba(0,63,136,0.24)]"
+                  : "text-[var(--muted)] hover:bg-white"
+              }`}
+            >
+              Tạo tài khoản
+            </button>
+          </div>
+
+          <div className="mt-7">
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">
+              {mode === "sign-in" ? "Chào mừng trở lại" : "Bắt đầu mới"}
+            </p>
+            <h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl font-bold text-[var(--foreground)]">
+              {mode === "sign-in" ? "Tiếp tục hành trình học tập." : "Tạo một góc theo dõi riêng cho bạn."}
+            </h2>
+          </div>
+
+          <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+            <Field label="Email">
+              <TextInput
+                type="email"
+                autoComplete="email"
+                required
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                placeholder="ban@hcmus.edu.vn"
+              />
+            </Field>
+
+            <Field label="Mật khẩu">
+              <TextInput
+                type="password"
+                autoComplete={mode === "sign-in" ? "current-password" : "new-password"}
+                required
+                minLength={6}
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder="Tối thiểu 6 ký tự"
+              />
+            </Field>
+
+            {errorMessage ? (
+              <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                {errorMessage}
+              </div>
+            ) : null}
+
+            {infoMessage ? (
+              <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+                {infoMessage}
+              </div>
+            ) : null}
+
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              size="lg"
+              className="w-full"
+            >
+              {isSubmitting
+                ? "Đang xử lý..."
+                : mode === "sign-in"
+                  ? "Đăng nhập"
+                  : "Tạo tài khoản"}
+              {!isSubmitting ? <ArrowRight className="h-4 w-4" /> : null}
+            </Button>
+          </form>
+
+          <p className="mt-5 text-sm text-[var(--muted)]">
+            Muốn xem lại trang giới thiệu?{" "}
+            <Link href="/" className="font-semibold text-[var(--brand-primary)]">
+              Quay về trang chủ
+            </Link>
+          </p>
+        </section>
+      </div>
+    </main>
+  );
+}

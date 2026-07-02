@@ -1,0 +1,108 @@
+- generic [ref=f1e1]:
+  - button "Open Next.js Dev Tools" [ref=f1e27] [cursor=pointer]:
+    - img [ref=f1e28]
+  - alert [ref=f1e31]
+  - main [ref=f1e43]:
+    - generic [ref=f1e44]:
+      - generic [ref=f1e45]:
+        - generic [ref=f1e46]:
+          - generic [ref=f1e47]: HCMUS GPA
+          - generic [ref=f1e48]:
+            - heading "Workspace" [level=1] [ref=f1e49]
+            - paragraph [ref=f1e50]: Nguyễn Kiểm Thử
+          - generic [ref=f1e51]: Khoa học máy tính (7480101)
+        - navigation [ref=f1e52]:
+          - button "Dashboard" [active] [ref=f1e53]:
+            - img [ref=f1e54]
+            - text: Dashboard
+          - button "Curriculum" [ref=f1e59]:
+            - img [ref=f1e60]
+            - text: Curriculum
+          - button "Grades" [ref=f1e62]:
+            - img [ref=f1e63]
+            - text: Grades
+          - button "Planner" [ref=f1e66]:
+            - img [ref=f1e67]
+            - text: Planner
+          - button "Insights" [ref=f1e70]:
+            - img [ref=f1e71]
+            - text: Insights
+        - button "Dang xuat" [ref=f1e74]:
+          - img [ref=f1e75]
+          - text: Dang xuat
+      - generic [ref=f1e78]:
+        - generic [ref=f1e102]: Diem hoc phan da duoc luu vao Supabase.
+        - generic [ref=f1e1729]:
+          - generic [ref=f1e1730]:
+            - generic [ref=f1e1731]:
+              - generic [ref=f1e1732]:
+                - generic [ref=f1e1733]:
+                  - paragraph [ref=f1e1734]: Dashboard
+                  - heading "Khoa học máy tính" [level=2] [ref=f1e1735]
+                - generic [ref=f1e1736]: 138 tin chi muc tieu
+              - generic [ref=f1e1737]:
+                - article [ref=f1e1738]:
+                  - paragraph [ref=f1e1739]: GPA he 10
+                  - paragraph [ref=f1e1740]: "8.00"
+                  - paragraph [ref=f1e1741]: 3 TC da tinh
+                - article [ref=f1e1742]:
+                  - paragraph [ref=f1e1743]: GPA he 4
+                  - paragraph [ref=f1e1744]: "3.50"
+                  - paragraph [ref=f1e1745]: 3/138 TC tich luy
+                - article [ref=f1e1746]:
+                  - paragraph [ref=f1e1747]: Tien do tot nghiep
+                  - paragraph [ref=f1e1748]: 2.2%
+                  - paragraph [ref=f1e1749]: 135 TC con thieu
+                - article [ref=f1e1750]:
+                  - paragraph [ref=f1e1751]: Can luu y
+                  - paragraph [ref=f1e1752]: "0"
+                  - paragraph [ref=f1e1753]: Hoc phan chua dat
+              - generic [ref=f1e1755]:
+                - paragraph [ref=f1e1756]: Tong tien do curriculum
+                - paragraph [ref=f1e1757]: 3 / 138 TC
+            - generic [ref=f1e1760]:
+              - paragraph [ref=f1e1761]: Watchlist
+              - generic [ref=f1e1762]:
+                - generic [ref=f1e1763]:
+                  - paragraph [ref=f1e1764]: Hoc phan chua dat
+                  - paragraph [ref=f1e1765]: "0"
+                - generic [ref=f1e1766]:
+                  - paragraph [ref=f1e1767]: Mon bat buoc con thieu
+                  - paragraph [ref=f1e1768]: "51"
+          - generic [ref=f1e1769]:
+            - generic [ref=f1e1770]:
+              - generic [ref=f1e1772]:
+                - paragraph [ref=f1e1773]: GPA timeline
+                - heading "Bien dong GPA theo hoc ky" [level=3] [ref=f1e1774]
+              - application [ref=f1e1778]:
+                - generic [ref=f1e1786]:
+                  - generic [ref=f1e1789]: HK1 2026-2027
+                  - generic [ref=f1e1790]:
+                    - generic [ref=f1e1792]: "0"
+                    - generic [ref=f1e1794]: "3"
+                    - generic [ref=f1e1796]: "6"
+                    - generic [ref=f1e1798]: "10"
+            - generic [ref=f1e1799]:
+              - paragraph [ref=f1e1800]: Theo nhom kien thuc
+              - generic [ref=f1e1801]:
+                - article [ref=f1e1802]:
+                  - generic [ref=f1e1803]:
+                    - paragraph [ref=f1e1804]: Giáo dục đại cương
+                    - paragraph [ref=f1e1805]: 3/56 TC
+                - article [ref=f1e1808]:
+                  - generic [ref=f1e1809]:
+                    - paragraph [ref=f1e1810]: Cơ sở ngành
+                    - paragraph [ref=f1e1811]: 0/38 TC
+                - article [ref=f1e1813]:
+                  - generic [ref=f1e1814]:
+                    - paragraph [ref=f1e1815]: Ngành chuyên ngành
+                    - paragraph [ref=f1e1816]: 0/16 TC
+                - article [ref=f1e1818]:
+                  - generic [ref=f1e1819]:
+                    - paragraph [ref=f1e1820]: Tự chọn chuyên ngành
+                    - paragraph [ref=f1e1821]: 0/18 TC
+                - article [ref=f1e1823]:
+                  - generic [ref=f1e1824]:
+                    - paragraph [ref=f1e1825]: Tốt nghiệp
+                    - paragraph [ref=f1e1826]: 0/10 TC
+  - generic [ref=f1e200]: HK1 2026-2027

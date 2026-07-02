@@ -1,0 +1,20 @@
+---
+description: HCMUS GPA Next.js, Supabase, and data-safety rules.
+globs: ["app/**/*.ts", "lib/**/*.ts", "supabase/**/*.sql"]
+alwaysApply: true
+---
+
+# HCMUS GPA Security Rules
+
+- Server-side auth must use Supabase `getUser()`, not `getSession()`.
+- Middleware/proxy is only for refreshing session cookies; authorization belongs in pages, routes, services, RLS, and RPC.
+- Every table must have RLS enabled unless it is a controlled internal table with explicit privileges.
+- Client requests must never be trusted for `user_id`, `score4`, `attempt_no`, `attempt_type`, `is_effective`, or GPA policy flags.
+- Mutations must validate runtime input with strict schemas, enforce same-origin requests, and apply rate limits.
+- State-changing API responses must go through `lib/security/api-response.ts`; do not call `NextResponse.json` directly in `app/api`.
+- Personal or authenticated API responses must be `private, no-store`.
+- API responses must return domain DTOs in camelCase, not raw database row shapes.
+- Never use `select("*")` in routes or data functions that return user-facing payloads.
+- Do not grant direct DML on curriculum/catalog/template data to browser roles.
+- Do not leak account existence, stack traces, SQL errors, or RLS details in user-facing messages.
+- Run `npm run security:audit` and `npm run security:privileges` after API, auth, migration, or Supabase changes.

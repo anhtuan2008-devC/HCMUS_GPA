@@ -1,0 +1,27 @@
+[    3529ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/1h0h_next_dist_2165rxv._.js:2477
+[    3628ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/1h0h_next_dist_2165rxv._.js:2477
+[   26043ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/1h0h_next_dist_2165rxv._.js:2477
+[   26919ms] [LOG] [Fast Refresh] done in 976ms @ http://localhost:3000/_next/static/chunks/1h0h_next_dist_2165rxv._.js:2477
+[   27010ms] [WARNING] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior @ http://localhost:3000/_next/static/chunks/1h0h_next_dist_2165rxv._.js:2477
+[   80472ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://oifouqndjignfhtorbep.supabase.co/auth/v1/signup?redirect_to=http%3A%2F%2F127.0.0.1%3A3000%2Fauth%2Fcallback:0
+[  108071ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://oifouqndjignfhtorbep.supabase.co/auth/v1/signup?redirect_to=http%3A%2F%2F127.0.0.1%3A3000%2Fauth%2Fcallback:0
+[  148929ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/1h0h_next_dist_2165rxv._.js:2477
+[  149065ms] [LOG] [Fast Refresh] done in 128ms @ http://localhost:3000/_next/static/chunks/1h0h_next_dist_2165rxv._.js:2477
+[  149177ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/1h0h_next_dist_2165rxv._.js:2477
+[  149304ms] [LOG] [Fast Refresh] done in 231ms @ http://localhost:3000/_next/static/chunks/1h0h_next_dist_2165rxv._.js:2477
+[  160387ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/1h0h_next_dist_2165rxv._.js:2477
+[  160412ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/1h0h_next_dist_2165rxv._.js:2477
+[  160605ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/1h0h_next_dist_2165rxv._.js:2477
+[  160622ms] [LOG] [Fast Refresh] done in 125ms @ http://localhost:3000/_next/static/chunks/1h0h_next_dist_2165rxv._.js:2477
+[  210583ms] [ERROR] Failed to load resource: the server responded with a status of 429 () @ https://oifouqndjignfhtorbep.supabase.co/auth/v1/signup:0
+[  433727ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/1h0h_next_dist_2165rxv._.js:2477
+[  435617ms] [LOG] [Fast Refresh] done in 1991ms @ http://localhost:3000/_next/static/chunks/1h0h_next_dist_2165rxv._.js:2477
+[  436190ms] [WARNING] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior @ http://localhost:3000/_next/static/chunks/1h0h_next_dist_2165rxv._.js:2477
+[  436592ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/1h0h_next_dist_2165rxv._.js:2477
+[  436644ms] [LOG] [Fast Refresh] done in 154ms @ http://localhost:3000/_next/static/chunks/1h0h_next_dist_2165rxv._.js:2477
+[  467747ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/1h0h_next_dist_2165rxv._.js:2477
+[  468477ms] [LOG] [Fast Refresh] done in 839ms @ http://localhost:3000/_next/static/chunks/1h0h_next_dist_2165rxv._.js:2477
+[  469715ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/1h0h_next_dist_2165rxv._.js:2477
+[  469990ms] [LOG] [Fast Refresh] done in 377ms @ http://localhost:3000/_next/static/chunks/1h0h_next_dist_2165rxv._.js:2477
+[  566692ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/1h0h_next_dist_2165rxv._.js:2477
+[  566863ms] [LOG] [Fast Refresh] done in 272ms @ http://localhost:3000/_next/static/chunks/1h0h_next_dist_2165rxv._.js:2477

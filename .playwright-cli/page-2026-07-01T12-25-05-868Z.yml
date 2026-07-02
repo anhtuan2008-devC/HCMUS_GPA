@@ -1,0 +1,31 @@
+- generic [ref=e1]:
+  - button "Open Next.js Dev Tools" [ref=e51] [cursor=pointer]:
+    - img [ref=e52]
+  - alert [ref=e55]
+  - main [ref=e56]:
+    - generic [ref=e57]:
+      - generic [ref=e58]:
+        - generic [ref=e59]: Auth + persistence that
+        - heading "Dang nhap de chuyen workspace GPA tu demo sang production." [level=1] [ref=e60]
+        - paragraph [ref=e61]: "Sau khi login, app se doc session cookie SSR, kiem tra `student_profile`, va dua ban vao onboarding hoac workspace chinh tuong ung."
+      - generic [ref=e62]:
+        - generic [ref=e63]:
+          - button "Dang nhap" [ref=e64]
+          - button "Tao tai khoan" [ref=e65]
+        - generic [ref=e66]:
+          - generic [ref=e67]:
+            - generic [ref=e68]: Email
+            - textbox "Email" [active] [ref=e69]:
+              - /placeholder: ban@hcmus.edu.vn
+              - text: codexhcmusgpa20260701@gmail.com
+          - generic [ref=e70]:
+            - generic [ref=e71]: Mat khau
+            - textbox "Mat khau" [ref=e72]:
+              - /placeholder: Toi thieu 6 ky tu
+              - text: Codex123!
+          - generic [ref=e79]: Email address "codex.hcmus.gpa+20260701@example.com" is invalid
+          - button "Tao tai khoan" [ref=e80]
+        - paragraph [ref=e74]:
+          - text: Chua muon dang nhap?
+          - link "Quay lai landing page" [ref=e75] [cursor=pointer]:
+            - /url: /

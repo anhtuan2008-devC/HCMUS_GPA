@@ -1,0 +1,64 @@
+- generic [active] [ref=f1e1]:
+  - button "Open Next.js Dev Tools" [ref=f1e27] [cursor=pointer]:
+    - img [ref=f1e28]
+  - alert [ref=f1e31]
+  - main [ref=f1e43]:
+    - generic [ref=f1e44]:
+      - generic [ref=f1e45]:
+        - generic [ref=f1e46]:
+          - generic [ref=f1e47]: HCMUS GPA
+          - generic [ref=f1e48]:
+            - heading "Workspace" [level=1] [ref=f1e49]
+            - paragraph [ref=f1e50]: codex.qa.user@gmail.com
+          - generic [ref=f1e51]: Can onboarding
+        - navigation [ref=f1e52]:
+          - button "Dashboard" [ref=f1e53]:
+            - img [ref=f1e54]
+            - text: Dashboard
+          - button "Curriculum" [ref=f1e59]:
+            - img [ref=f1e60]
+            - text: Curriculum
+          - button "Grades" [ref=f1e62]:
+            - img [ref=f1e63]
+            - text: Grades
+          - button "Planner" [ref=f1e66]:
+            - img [ref=f1e67]
+            - text: Planner
+          - button "Insights" [ref=f1e70]:
+            - img [ref=f1e71]
+            - text: Insights
+        - button "Dang xuat" [ref=f1e74]:
+          - img [ref=f1e75]
+          - text: Dang xuat
+      - generic [ref=f1e79]:
+        - generic [ref=f1e80]:
+          - paragraph [ref=f1e81]: Onboarding
+          - heading "Tao ho so sinh vien va khoa chuong trinh dao tao." [level=2] [ref=f1e82]
+          - paragraph [ref=f1e83]: "`program_id` se duoc khoa sau lan tao dau tien. Toan bo GPA, curriculum, planner va analytics ve sau se dua tren CTDT nay."
+        - generic [ref=f1e84]:
+          - generic [ref=f1e85]:
+            - generic [ref=f1e86]: Ho va ten
+            - textbox "Ho va ten" [ref=f1e87]:
+              - /placeholder: Nguyen Van A
+              - text: Nguyễn Kiểm Thử
+          - generic [ref=f1e88]:
+            - generic [ref=f1e89]: MSSV
+            - textbox "MSSV" [ref=f1e90]:
+              - /placeholder: 24xxxxxx
+              - text: "24123456"
+          - generic [ref=f1e91]:
+            - generic [ref=f1e92]: Email
+            - textbox "Email" [ref=f1e93]:
+              - /placeholder: ban@hcmus.edu.vn
+              - text: codex.qa.user@gmail.com
+          - generic [ref=f1e94]:
+            - generic [ref=f1e95]: Khoa tuyen
+            - spinbutton "Khoa tuyen" [ref=f1e96]: "2024"
+        - generic [ref=f1e97]:
+          - generic [ref=f1e98]: Chuong trinh dao tao
+          - combobox "Chuong trinh dao tao" [ref=f1e99]:
+            - option "Khoa học máy tính (7480101)" [selected]
+            - option "Kỹ thuật phần mềm (7480103)"
+            - option "Hệ thống thông tin (7480104)"
+            - option "Công nghệ thông tin (7480201)"
+        - button "Dang luu ho so..." [disabled] [ref=f1e101]

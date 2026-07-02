@@ -1,0 +1,20 @@
+---
+description: HCMUS GPA UI, brand, motion, and copy rules.
+globs: ["**/*.tsx", "**/*.css", "design/**/*.md"]
+alwaysApply: true
+---
+
+# HCMUS GPA UI Rules
+
+- Use HCMUS GPA design tokens before adding new colors, spacing, fonts, shadows, or motion.
+- Use `--brand-*`, `--surface-*`, `--line*`, `--focus-ring`, and shared UI primitives before writing new Tailwind one-off styles.
+- Keep user-facing copy in Vietnamese with full diacritics.
+- Do not expose database or implementation language in student-facing UI.
+- Use HCMUS blue as the primary brand language; reserve high-chroma accents for actions or states.
+- Use official HCMUS logo assets only from `public/brand/`, without recoloring, stretching, cropping, or redrawing.
+- Prefer clear, breathable dashboards with stable grids over generic landing-page sections.
+- Build product-specific UI; do not copy external sites, UI kits, or AI-default gradients. Borrow principles, not layouts.
+- New buttons, form fields, badges, cards, dropdowns, toasts, progress bars and tables must go through `components/ui/*` unless there is a documented exception.
+- Motion must clarify state changes and respect `prefers-reduced-motion`.
+- Important long labels may truncate only when a tooltip/title or detail view reveals the full text.
+- Run `npm run ui:audit` after UI changes.
