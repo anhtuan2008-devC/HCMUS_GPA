@@ -25,18 +25,18 @@ export function OnboardingPanel({
   onSubmit: () => void;
 }>) {
   return (
-    <PanelCard className="motion-page space-y-7">
-      <div className="grid gap-5 lg:grid-cols-[1fr_16.25rem] lg:items-start">
+    <PanelCard className="motion-page space-y-5 sm:space-y-7">
+      <div className="grid gap-4 sm:gap-5 lg:grid-cols-[1fr_16.25rem] lg:items-start">
         <div>
           <div className="flex items-start gap-3">
             <IconBadge tone="brand">
               <GraduationCap className="h-5 w-5" />
             </IconBadge>
             <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted)] sm:text-sm sm:tracking-[0.2em]">
                 Thiết lập ban đầu
               </p>
-              <h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl text-[var(--foreground)]">
+              <h2 className="mt-2 font-[family-name:var(--font-display)] text-2xl text-[var(--foreground)] sm:mt-3 sm:text-3xl">
                 Tạo hồ sơ để cá nhân hóa kế hoạch học tập.
               </h2>
             </div>
@@ -46,12 +46,12 @@ export function OnboardingPanel({
             tín chỉ và gợi ý học kỳ sẽ đi theo chương trình này để tránh nhầm lẫn về sau.
           </p>
         </div>
-        <div className="rounded-[1.5rem] border border-[var(--line)] bg-[var(--surface-tint)] px-4 py-4 text-sm leading-7 text-[var(--muted)]">
+        <div className="rounded-[1.15rem] border border-[var(--line)] bg-[var(--surface-tint)] px-3 py-3 text-sm leading-7 text-[var(--muted)] sm:rounded-[1.5rem] sm:px-4 sm:py-4">
           Sau khi lưu, bạn có thể bắt đầu nhập điểm từng học phần và xem tiến độ cập nhật ngay trên Tổng quan.
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-2">
         <Field label="Họ và tên">
           <TextInput
             value={draft.fullName}

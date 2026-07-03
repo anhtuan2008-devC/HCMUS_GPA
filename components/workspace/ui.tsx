@@ -31,7 +31,7 @@ export function StatusPill({
       tone={tone === "danger" ? "danger" : tone}
       title={label}
       aria-label={label}
-      className={clsx("w-[5.75rem] max-w-[5.75rem]", className)}
+      className={clsx("w-[5rem] max-w-[5rem] sm:w-[5.75rem] sm:max-w-[5.75rem]", className)}
     >
       {label}
     </Badge>
@@ -87,18 +87,21 @@ export function ProgressRing({
   value,
   label,
   sublabel,
+  size = "default",
 }: Readonly<{
   value: number;
   label: string;
   sublabel: string;
+  size?: "default" | "compact";
 }>) {
   const safeValue = Math.max(0, Math.min(100, value));
   const radius = 54;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (safeValue / 100) * circumference;
+  const isCompact = size === "compact";
 
   return (
-    <div className="relative mx-auto h-40 w-40">
+    <div className={clsx("relative mx-auto", isCompact ? "h-28 w-28 sm:h-40 sm:w-40" : "h-32 w-32 sm:h-40 sm:w-40")}>
       <svg className="h-full w-full -rotate-90" viewBox="0 0 140 140" aria-hidden="true">
         <circle
           cx="70"
@@ -135,8 +138,12 @@ export function ProgressRing({
         </defs>
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-        <p className="text-3xl font-bold text-[var(--foreground)]">{label}</p>
-        <p className="mt-1 text-xs leading-5 text-[var(--muted)]">{sublabel}</p>
+        <p className={clsx("font-bold text-[var(--foreground)]", isCompact ? "text-xl sm:text-3xl" : "text-2xl sm:text-3xl")}>
+          {label}
+        </p>
+        <p className={clsx("mt-1 text-[var(--muted)]", isCompact ? "max-w-24 text-[0.58rem] leading-3.5 sm:max-w-none sm:text-xs sm:leading-5" : "text-xs leading-5")}>
+          {sublabel}
+        </p>
       </div>
     </div>
   );
@@ -159,7 +166,7 @@ export function IconBadge({
   return (
     <span
       className={clsx(
-        "inline-flex h-[max(2.75rem,40px)] w-[max(2.75rem,40px)] items-center justify-center rounded-2xl ring-1",
+        "inline-flex h-[max(2.5rem,40px)] w-[max(2.5rem,40px)] items-center justify-center rounded-xl ring-1 sm:h-[max(2.75rem,40px)] sm:w-[max(2.75rem,40px)] sm:rounded-2xl",
         toneClassName,
       )}
     >

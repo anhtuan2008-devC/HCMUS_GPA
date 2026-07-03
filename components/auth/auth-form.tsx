@@ -89,8 +89,8 @@ export function AuthForm({
   }
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-7xl items-center px-4 py-8 sm:px-6 lg:px-8">
-      <div className="grid w-full gap-6 lg:grid-cols-[1.05fr_minmax(23.75rem,0.9fr)]">
+    <main className="mx-auto flex min-h-screen w-full max-w-7xl items-center px-3 py-4 sm:px-6 sm:py-8 lg:px-8">
+      <div className="grid w-full gap-4 sm:gap-6 lg:grid-cols-[1.05fr_minmax(23.75rem,0.9fr)]">
         <section className="sidebar-shell motion-page relative hidden overflow-hidden rounded-[2.5rem] p-10 text-white lg:block">
           <div className="absolute -right-12 top-16 h-48 w-48 rounded-full bg-white/10 blur-3xl" />
           <div className="inline-flex rounded-[1.4rem] border border-white/15 bg-white/10 px-4 py-3">
@@ -126,12 +126,12 @@ export function AuthForm({
           </div>
         </section>
 
-        <section className="soft-card motion-card rounded-[2.5rem] p-6 sm:p-8">
+        <section className="soft-card motion-card rounded-[1.5rem] p-4 sm:rounded-[2.5rem] sm:p-8">
           <div className="flex items-center gap-2 rounded-full border border-[var(--line)] bg-white/75 p-1">
             <button
               type="button"
               onClick={() => changeMode("sign-in")}
-              className={`flex-1 rounded-full px-4 py-2 text-sm font-semibold transition ${
+              className={`flex-1 rounded-full px-3 py-2 text-sm font-semibold transition sm:px-4 ${
                 mode === "sign-in"
                   ? "bg-[var(--brand-primary)] text-white shadow-[0_10px_28px_rgba(0,63,136,0.24)]"
                   : "text-[var(--muted)] hover:bg-white"
@@ -142,7 +142,7 @@ export function AuthForm({
             <button
               type="button"
               onClick={() => changeMode("sign-up")}
-              className={`flex-1 rounded-full px-4 py-2 text-sm font-semibold transition ${
+              className={`flex-1 rounded-full px-3 py-2 text-sm font-semibold transition sm:px-4 ${
                 mode === "sign-up"
                   ? "bg-[var(--brand-primary)] text-white shadow-[0_10px_28px_rgba(0,63,136,0.24)]"
                   : "text-[var(--muted)] hover:bg-white"
@@ -152,16 +152,16 @@ export function AuthForm({
             </button>
           </div>
 
-          <div className="mt-7">
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">
+          <div className="mt-5 sm:mt-7">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted)] sm:text-sm sm:tracking-[0.2em]">
               {mode === "sign-in" ? "Chào mừng trở lại" : "Bắt đầu mới"}
             </p>
-            <h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl font-bold text-[var(--foreground)]">
+            <h2 className="mt-2 font-[family-name:var(--font-display)] text-2xl font-bold text-[var(--foreground)] sm:mt-3 sm:text-3xl">
               {mode === "sign-in" ? "Tiếp tục hành trình học tập." : "Tạo một góc theo dõi riêng cho bạn."}
             </h2>
           </div>
 
-          <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+          <form className="mt-5 space-y-3 sm:mt-6 sm:space-y-4" onSubmit={handleSubmit}>
             <Field label="Email">
               <TextInput
                 type="email"

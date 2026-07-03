@@ -1,19 +1,19 @@
 "use client";
 
-import { startTransition, useEffect, useRef, useState } from "react";
+import { startTransition, useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
   Bell,
   BookOpen,
   ChevronDown,
+  ChevronLeft,
   ClipboardList,
   GraduationCap,
   LayoutDashboard,
   LineChart,
   LogOut,
   Menu,
-  X,
 } from "lucide-react";
 import { OnboardingPanel } from "@/components/workspace/onboarding-panel";
 import { DashboardPanel } from "@/components/workspace/dashboard-panel";
@@ -87,6 +87,8 @@ type AttemptInput = {
 type AttemptUpdateInput = Omit<AttemptInput, "courseId"> & {
   attemptId: string;
 };
+
+const MOBILE_NAV_ANIMATION_MS = 240;
 
 const navItems: Array<{
   key: ViewKey;
@@ -293,6 +295,8 @@ export function WorkspaceShell({
     initialRoute.dashboardPage ?? "overview",
   );
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const [isMobileNavRendered, setIsMobileNavRendered] = useState(false);
+  const [mobileNavPhase, setMobileNavPhase] = useState<"enter" | "exit">("enter");
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isTermMenuOpen, setIsTermMenuOpen] = useState(false);
   const [profileDraft, setProfileDraft] = useState(createProfileDraft(initialData));
@@ -310,6 +314,8 @@ export function WorkspaceShell({
   const [isPlanSaving, setIsPlanSaving] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
   const notificationDropdownRef = useRef<HTMLDivElement>(null);
+  const mobileNavBubbleRef = useRef<HTMLDivElement>(null);
+  const mobileNavTimeoutRef = useRef<number | null>(null);
 
   const currentProgram = snapshot.currentProgram;
   const summary = snapshot.summary ?? emptySummary();
@@ -351,6 +357,44 @@ export function WorkspaceShell({
       ].filter((value, index, values) => value && values.indexOf(value) === index)
     : [currentTermLabel];
 
+  const clearMobileNavTimeout = useCallback(() => {
+    if (mobileNavTimeoutRef.current !== null) {
+      window.clearTimeout(mobileNavTimeoutRef.current);
+      mobileNavTimeoutRef.current = null;
+    }
+  }, []);
+
+  const openMobileNav = useCallback(() => {
+    clearMobileNavTimeout();
+    setIsMobileNavRendered(true);
+    setMobileNavPhase("enter");
+    setIsMobileNavOpen(true);
+  }, [clearMobileNavTimeout]);
+
+  const closeMobileNav = useCallback(() => {
+    if (!isMobileNavOpen && !isMobileNavRendered) {
+      return;
+    }
+
+    clearMobileNavTimeout();
+    setIsMobileNavOpen(false);
+    setMobileNavPhase("exit");
+    mobileNavTimeoutRef.current = window.setTimeout(() => {
+      setIsMobileNavRendered(false);
+      setMobileNavPhase("enter");
+      mobileNavTimeoutRef.current = null;
+    }, MOBILE_NAV_ANIMATION_MS);
+  }, [clearMobileNavTimeout, isMobileNavOpen, isMobileNavRendered]);
+
+  const toggleMobileNav = useCallback(() => {
+    if (isMobileNavOpen) {
+      closeMobileNav();
+      return;
+    }
+
+    openMobileNav();
+  }, [closeMobileNav, isMobileNavOpen, openMobileNav]);
+
   function updateWorkspaceRoute(
     view: ViewKey,
     gradesPage: GradesPageKey = activeGradesPage,
@@ -360,7 +404,7 @@ export function WorkspaceShell({
       setActiveView(view);
       setActiveGradesPage(gradesPage);
       setActiveDashboardPage(view === "dashboard" ? dashboardPage : "overview");
-      setIsMobileNavOpen(false);
+      closeMobileNav();
     });
 
     if (typeof window === "undefined") {
@@ -386,14 +430,14 @@ export function WorkspaceShell({
         setActiveView(route.view);
         setActiveGradesPage(route.gradesPage);
         setActiveDashboardPage(route.dashboardPage ?? "overview");
-        setIsMobileNavOpen(false);
+        closeMobileNav();
         setIsNotificationOpen(false);
       });
     }
 
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
-  }, []);
+  }, [closeMobileNav]);
 
   useEffect(() => {
     const nextTerm =
@@ -423,9 +467,55 @@ export function WorkspaceShell({
       setIsNotificationOpen(false);
     }
 
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setIsNotificationOpen(false);
+      }
+    }
+
     document.addEventListener("pointerdown", handlePointerDown);
-    return () => document.removeEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
   }, [isNotificationOpen]);
+
+  useEffect(() => {
+    if (!isMobileNavOpen) {
+      return;
+    }
+
+    function handlePointerDown(event: PointerEvent) {
+      const target = event.target as HTMLElement | null;
+
+      if (
+        mobileNavBubbleRef.current?.contains(event.target as Node) ||
+        target?.closest("[data-mobile-nav-trigger='true']")
+      ) {
+        return;
+      }
+
+      closeMobileNav();
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        closeMobileNav();
+      }
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [closeMobileNav, isMobileNavOpen]);
+
+  useEffect(() => {
+    return () => clearMobileNavTimeout();
+  }, [clearMobileNavTimeout]);
 
   useEffect(() => {
     if (!notice) {
@@ -775,7 +865,7 @@ export function WorkspaceShell({
     updateWorkspaceRoute("grades", page);
   }
 
-  function renderSidebarContent() {
+  function renderSidebarContent({ showNavigation = true }: { showNavigation?: boolean } = {}) {
     const displayName = snapshot.profile?.fullName || snapshot.user.email || "Bạn";
 
     return (
@@ -799,28 +889,30 @@ export function WorkspaceShell({
             <p className="mt-1 text-sm text-white/68">Tự quản lý kết quả học tập</p>
           </div>
 
-          <nav className="space-y-2">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = activeView === item.key;
+          {showNavigation ? (
+            <nav className="space-y-2">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = activeView === item.key;
 
-              return (
-                <button
-                  key={item.key}
-                  type="button"
-                  onClick={() => handleNavigate(item.key)}
-                  className={`flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left text-sm font-semibold transition ${
-                    isActive
-                      ? "bg-white/14 text-white shadow-[0_16px_34px_rgba(0,0,0,0.18)] ring-1 ring-white/12"
-                      : "text-white/70 hover:bg-white/9 hover:text-white"
-                  }`}
-                >
-                  <Icon className="h-5 w-5" />
-                  {navigationLabels[item.key]}
-                </button>
-              );
-            })}
-          </nav>
+                return (
+                  <button
+                    key={item.key}
+                    type="button"
+                    onClick={() => handleNavigate(item.key)}
+                    className={`flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left text-sm font-semibold transition ${
+                      isActive
+                        ? "bg-white/14 text-white shadow-[0_16px_34px_rgba(0,0,0,0.18)] ring-1 ring-white/12"
+                        : "text-white/70 hover:bg-white/9 hover:text-white"
+                    }`}
+                  >
+                    <Icon className="h-5 w-5" />
+                    {navigationLabels[item.key]}
+                  </button>
+                );
+              })}
+            </nav>
+          ) : null}
         </div>
 
         <div className="space-y-4">
@@ -865,8 +957,8 @@ export function WorkspaceShell({
   }
 
   return (
-    <main className="min-h-screen px-3 py-3 sm:px-5 sm:py-5">
-      <div className="mx-auto grid w-full max-w-[var(--app-max-width)] gap-5 lg:grid-cols-[var(--app-sidebar-width)_minmax(0,1fr)]">
+    <main className="min-h-screen px-2 py-2 pb-20 sm:px-5 sm:py-5 sm:pb-5">
+      <div className="mx-auto grid w-full max-w-[var(--app-max-width)] gap-3 sm:gap-5 lg:grid-cols-[var(--app-sidebar-width)_minmax(0,1fr)]">
         <aside className="sidebar-shell sticky top-5 hidden h-[calc(100vh-2.5rem)] flex-col justify-between overflow-hidden rounded-[2rem] px-5 py-6 lg:flex">
           <div className="pointer-events-none absolute bottom-24 left-0 h-40 w-full opacity-20">
             <div className="absolute bottom-0 left-6 h-16 w-20 rounded-t-2xl border border-white/35" />
@@ -876,19 +968,70 @@ export function WorkspaceShell({
           <div className="relative z-10 flex h-full flex-col justify-between">{renderSidebarContent()}</div>
         </aside>
 
-        <div className="min-w-0 space-y-5">
-          <div className="soft-card sticky top-3 z-30 flex flex-col gap-3 rounded-[1.5rem] px-4 py-3 lg:hidden">
-            <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0 space-y-3 sm:space-y-5">
+          <div className="soft-card sticky top-2 z-30 rounded-[1.25rem] px-2.5 py-2 lg:hidden">
+            <div className="grid grid-cols-[2.5rem_minmax(0,1fr)_2.5rem] items-center gap-2">
               <button
                 type="button"
-                onClick={() => setIsMobileNavOpen(true)}
-                className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--brand-primary)] text-white"
-                aria-label="Mở điều hướng"
+                data-mobile-nav-trigger="true"
+                onClick={toggleMobileNav}
+                className="relative inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-[var(--brand-primary)] text-white shadow-[0_10px_24px_rgba(0,63,136,0.22)] transition-[background-color,box-shadow,transform] duration-200 active:scale-95"
+                aria-label={isMobileNavOpen ? "Đóng điều hướng" : "Mở điều hướng"}
+                aria-expanded={isMobileNavOpen}
               >
-                <Menu className="h-5 w-5" />
+                <Menu
+                  className={`absolute h-5 w-5 transition-[filter,opacity,transform] duration-200 ${
+                    isMobileNavOpen
+                      ? "-rotate-90 scale-75 opacity-0 blur-[1px]"
+                      : "rotate-0 scale-100 opacity-100 blur-0"
+                  }`}
+                />
+                <ChevronLeft
+                  className={`absolute h-5 w-5 transition-[filter,opacity,transform] duration-200 ${
+                    isMobileNavOpen
+                      ? "rotate-0 scale-100 opacity-100 blur-0"
+                      : "rotate-90 scale-75 opacity-0 blur-[1px]"
+                  }`}
+                />
               </button>
-              <div className="text-center">
-                <div className="flex items-center justify-center gap-2">
+              {snapshot.profile && currentProgram ? (
+                <div className="relative min-w-0">
+                  <button
+                    type="button"
+                    onClick={() => setIsTermMenuOpen((current) => !current)}
+                    className="flex h-10 w-full min-w-0 items-center justify-between gap-2 rounded-xl border border-[var(--line)] bg-white/82 px-3 text-left"
+                  >
+                    <span className="min-w-0">
+                      <span className="block truncate text-[0.72rem] font-semibold uppercase tracking-[0.12em] text-[var(--muted)]">
+                        {navigationLabels[activeView]}
+                      </span>
+                      <span className="block truncate text-sm font-bold text-[var(--brand-primary)]">
+                        {currentTermLabel}
+                      </span>
+                    </span>
+                    <ChevronDown className="h-4 w-4 shrink-0 text-[var(--muted)]" />
+                  </button>
+                  {isTermMenuOpen ? (
+                    <div className="absolute left-0 right-0 z-40 mt-2 max-h-72 overflow-y-auto rounded-2xl border border-[var(--line)] bg-white p-2 shadow-[0_18px_48px_rgba(0,25,54,0.16)]">
+                      {currentTermOptions.map((label) => (
+                        <button
+                          key={label}
+                          type="button"
+                          onClick={() => handleSaveCurrentTerm(label)}
+                          className={`w-full rounded-xl px-3 py-2 text-left text-sm font-semibold transition ${
+                            label === currentTermLabel
+                              ? "bg-[var(--surface-tint)] text-[var(--brand-primary)]"
+                              : "text-[var(--foreground)] hover:bg-[var(--surface-soft)]"
+                          }`}
+                        >
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+              ) : (
+                <div className="flex min-w-0 items-center justify-center gap-2">
                   <Image
                     src="/brand/hcmus-logo.png"
                     alt="Logo Trường Đại học Khoa học tự nhiên, ĐHQG-HCM"
@@ -899,13 +1042,12 @@ export function WorkspaceShell({
                   />
                   <span className="text-sm font-bold text-[var(--foreground)]">GPA</span>
                 </div>
-                <p className="text-xs text-[var(--muted)]">{navigationLabels[activeView]}</p>
-              </div>
+              )}
               <button
                 type="button"
                 data-notification-trigger="true"
                 onClick={() => setIsNotificationOpen((current) => !current)}
-                className="relative inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-orange-50 text-orange-600"
+                className="relative inline-flex h-10 w-10 items-center justify-center rounded-xl bg-orange-50 text-orange-600"
                 aria-label="Mở trung tâm cảnh báo"
               >
                 <Bell className="h-5 w-5" />
@@ -914,51 +1056,15 @@ export function WorkspaceShell({
                 </span>
               </button>
             </div>
-            {snapshot.profile && currentProgram ? (
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={() => setIsTermMenuOpen((current) => !current)}
-                  className="flex w-full items-center justify-between gap-3 rounded-2xl border border-[var(--line)] bg-white/82 px-4 py-3 text-left text-sm font-semibold text-[var(--foreground)]"
-                >
-                  <span>Học kỳ hiện tại</span>
-                  <span className="text-[var(--brand-primary)]">{currentTermLabel}</span>
-                  <ChevronDown className="h-4 w-4 text-[var(--muted)]" />
-                </button>
-                {isTermMenuOpen ? (
-                  <div className="absolute left-0 right-0 z-40 mt-2 max-h-72 overflow-y-auto rounded-2xl border border-[var(--line)] bg-white p-2 shadow-[0_18px_48px_rgba(0,25,54,0.16)]">
-                    {currentTermOptions.map((label) => (
-                      <button
-                        key={label}
-                        type="button"
-                        onClick={() => handleSaveCurrentTerm(label)}
-                        className={`w-full rounded-xl px-3 py-2 text-left text-sm font-semibold transition ${
-                          label === currentTermLabel
-                            ? "bg-[var(--surface-tint)] text-[var(--brand-primary)]"
-                            : "text-[var(--foreground)] hover:bg-[var(--surface-soft)]"
-                        }`}
-                      >
-                        {label}
-                      </button>
-                    ))}
-                  </div>
-                ) : null}
-              </div>
-            ) : null}
           </div>
 
-          {isMobileNavOpen ? (
-            <div className="fixed inset-0 z-40 bg-slate-950/45 backdrop-blur-sm lg:hidden">
-              <aside className="sidebar-shell m-3 flex h-[calc(100vh-1.5rem)] max-w-sm flex-col justify-between rounded-[2rem] px-5 py-6">
-                <button
-                  type="button"
-                  onClick={() => setIsMobileNavOpen(false)}
-                  className="absolute right-7 top-7 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white"
-                  aria-label="Đóng điều hướng"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-                {renderSidebarContent()}
+          {isMobileNavRendered ? (
+            <div
+              ref={mobileNavBubbleRef}
+              className={`mobile-nav-bubble mobile-nav-bubble-${mobileNavPhase} fixed left-2 top-[4.25rem] z-40 w-[min(20rem,62vw)] lg:hidden`}
+            >
+              <aside className="sidebar-shell flex max-h-[calc(100vh-6rem)] flex-col justify-between overflow-y-auto rounded-[2.35rem] rounded-tl-[1.05rem] px-3 py-4 shadow-[0_24px_70px_rgba(0,25,54,0.28)]">
+                {renderSidebarContent({ showNavigation: false })}
               </aside>
             </div>
           ) : null}
@@ -1129,6 +1235,34 @@ export function WorkspaceShell({
         </div>
 
       </div>
+      {snapshot.profile && currentProgram ? (
+        <nav
+          className="fixed inset-x-2 bottom-2 z-30 grid grid-cols-5 gap-1 rounded-[1.15rem] border border-white/75 bg-white/94 p-1 shadow-[0_18px_54px_rgba(0,25,54,0.18)] backdrop-blur lg:hidden"
+          aria-label="Điều hướng chính"
+        >
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeView === item.key;
+
+            return (
+              <button
+                key={item.key}
+                type="button"
+                onClick={() => handleNavigate(item.key)}
+                className={`mobile-bottom-nav-item relative flex min-h-[2.75rem] min-w-0 items-center justify-center overflow-hidden rounded-[0.9rem] px-1 transition-[color,transform] duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--focus-ring)] ${
+                  isActive
+                    ? "is-active text-white"
+                    : "text-[var(--muted)] hover:bg-[var(--surface-tint)] hover:text-[var(--brand-primary)]"
+                }`}
+                aria-label={navigationLabels[item.key]}
+              >
+                <span className="mobile-bottom-nav-pill" aria-hidden="true" />
+                <Icon className="relative z-10 h-5 w-5 transition-[transform,opacity] duration-200" />
+              </button>
+            );
+          })}
+        </nav>
+      ) : null}
       <NotificationDropdown
         isOpen={isNotificationOpen}
         notifications={notifications}

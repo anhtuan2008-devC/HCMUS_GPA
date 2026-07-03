@@ -16,10 +16,10 @@ const variantClassName: Record<ButtonVariant, string> = {
 };
 
 const sizeClassName: Record<ButtonSize, string> = {
-  sm: "min-h-[max(2.5rem,40px)] min-w-[max(6rem,88px)] px-4 py-2 text-xs",
-  md: "min-h-[max(2.75rem,42px)] min-w-[max(8rem,112px)] px-5 py-2.5 text-sm",
-  lg: "min-h-[max(3rem,44px)] min-w-[max(10rem,128px)] px-6 py-3 text-sm",
-  icon: "h-[max(2.75rem,42px)] w-[max(2.75rem,42px)] min-w-[max(2.75rem,42px)] p-0 text-sm",
+  sm: "min-h-[max(2.35rem,40px)] min-w-[max(4.75rem,76px)] px-3 py-2 text-xs sm:min-w-[max(6rem,88px)] sm:px-4",
+  md: "min-h-[max(2.5rem,42px)] min-w-[max(6.25rem,92px)] px-3.5 py-2 text-sm sm:min-w-[max(8rem,112px)] sm:px-5 sm:py-2.5",
+  lg: "min-h-[max(2.75rem,44px)] min-w-[max(7.5rem,104px)] px-4 py-2.5 text-sm sm:min-w-[max(10rem,128px)] sm:px-6 sm:py-3",
+  icon: "h-[max(2.5rem,42px)] w-[max(2.5rem,42px)] min-w-[max(2.5rem,42px)] p-0 text-sm sm:h-[max(2.75rem,42px)] sm:w-[max(2.75rem,42px)] sm:min-w-[max(2.75rem,42px)]",
 };
 
 export function Button({

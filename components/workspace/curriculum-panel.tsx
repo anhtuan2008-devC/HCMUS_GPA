@@ -49,13 +49,13 @@ export function CurriculumPanel({
 }>) {
   return (
     <div className="space-y-4">
-      <PanelCard className="space-y-4">
+      <PanelCard className="space-y-3 sm:space-y-4">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted)] sm:text-sm sm:tracking-[0.2em]">
               Chương trình học
             </p>
-            <h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl text-[var(--foreground)]">
+            <h2 className="mt-2 font-[family-name:var(--font-display)] text-2xl text-[var(--foreground)] sm:mt-3 sm:text-3xl">
               Theo dõi từng nhóm học phần.
             </h2>
           </div>
@@ -64,7 +64,7 @@ export function CurriculumPanel({
             <input
               value={search}
               onChange={(event) => onSearchChange(event.target.value)}
-              className="w-full rounded-2xl border border-[var(--line)] bg-white/80 px-4 py-3 outline-none transition focus:border-[var(--brand-primary)]"
+              className="w-full rounded-xl border border-[var(--line)] bg-white/80 px-3 py-2.5 outline-none transition focus:border-[var(--brand-primary)] sm:rounded-2xl sm:px-4 sm:py-3"
               placeholder="VD: CSC10004, cơ sở dữ liệu..."
             />
           </label>
@@ -77,7 +77,7 @@ export function CurriculumPanel({
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">
               Cơ cấu tín chỉ tốt nghiệp
             </p>
-            <h3 className="mt-2 text-2xl font-semibold text-[var(--foreground)]">
+            <h3 className="mt-2 text-xl font-semibold text-[var(--foreground)] sm:text-2xl">
               {program.totalCredits} tín chỉ theo bảng CTĐT
             </h3>
             <p className="mt-2 max-w-3xl text-sm leading-7 text-[var(--muted)]">
@@ -85,19 +85,19 @@ export function CurriculumPanel({
               tổng tín chỉ tích lũy tốt nghiệp.
             </p>
           </div>
-          <div className="grid gap-3 xl:grid-cols-4">
+          <div className="grid grid-cols-2 gap-2 sm:gap-3 xl:grid-cols-4">
             {program.requirementSections.map((section) => (
               <article
                 key={section.id}
-                className="rounded-[1.5rem] border border-[var(--line)] bg-white/76 p-4"
+                className="rounded-[1.15rem] border border-[var(--line)] bg-white/76 p-3 sm:rounded-[1.5rem] sm:p-4"
               >
                 <div className="flex items-start justify-between gap-3">
-                  <h4 className="font-semibold leading-6 text-[var(--foreground)]">{section.title}</h4>
-                  <span className="rounded-full bg-[var(--surface-tint)] px-3 py-1 text-sm font-bold text-[var(--brand-primary)] ring-1 ring-[var(--line)]">
+                  <h4 className="text-sm font-semibold leading-5 text-[var(--foreground)] sm:text-base sm:leading-6">{section.title}</h4>
+                  <span className="rounded-full bg-[var(--surface-tint)] px-2.5 py-1 text-xs font-bold text-[var(--brand-primary)] ring-1 ring-[var(--line)] sm:px-3 sm:text-sm">
                     {section.totalCredits} TC
                   </span>
                 </div>
-                <div className="mt-4 flex flex-wrap gap-2">
+                <div className="mt-3 flex flex-wrap gap-1.5 sm:mt-4 sm:gap-2">
                   <StatusPill
                     label={`${section.requiredCredits} BB`}
                     tone={section.requiredCredits ? "success" : "neutral"}
@@ -148,16 +148,16 @@ export function CurriculumPanel({
         }
 
         return (
-          <PanelCard key={group.id} className="space-y-5">
+          <PanelCard key={group.id} className="space-y-4 sm:space-y-5">
             <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">
                   {courseCategoryLabels[group.category]}
                 </p>
-                <h3 className="mt-2 text-2xl font-semibold text-[var(--foreground)]">{group.title}</h3>
+                <h3 className="mt-2 text-xl font-semibold text-[var(--foreground)] sm:text-2xl">{group.title}</h3>
                 <p className="mt-2 max-w-2xl text-sm leading-7 text-[var(--muted)]">{group.description}</p>
               </div>
-              <div className="min-w-64 space-y-2">
+              <div className="min-w-0 space-y-2 lg:min-w-64">
                 <div className="flex items-center justify-between gap-3 text-sm text-[var(--muted)]">
                   <span>Tiến độ nhóm</span>
                   <span>{earnedCredits}/{group.requiredCredits} TC</span>
@@ -166,7 +166,7 @@ export function CurriculumPanel({
               </div>
             </div>
 
-            <div className="overflow-hidden rounded-[1.5rem] border border-[var(--line)] bg-white/70">
+            <div className="overflow-hidden rounded-[1.15rem] border border-[var(--line)] bg-white/70 sm:rounded-[1.5rem]">
               <div className="hidden grid-cols-[8.75rem_minmax(13.75rem,1fr)_4.5rem_6rem_7.5rem] gap-3 border-b border-[var(--line)] px-4 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted)] md:grid">
                 <span>Mã môn</span>
                 <span>Học phần</span>
@@ -181,18 +181,24 @@ export function CurriculumPanel({
                   return (
                     <article
                       key={course.id}
-                      className="grid gap-3 px-4 py-4 md:grid-cols-[8.75rem_minmax(13.75rem,1fr)_4.5rem_6rem_7.5rem] md:items-center"
+                      className="grid grid-cols-[minmax(0,1fr)_auto] gap-2 px-2.5 py-2.5 text-[0.78rem] sm:gap-3 sm:px-4 sm:py-4 sm:text-sm md:grid-cols-[8.75rem_minmax(13.75rem,1fr)_4.5rem_6rem_7.5rem] md:items-center"
                     >
                       <div className="font-semibold text-[var(--foreground)]">{course.code}</div>
-                      <div>
-                        <p className="font-medium text-[var(--foreground)]">{course.title}</p>
-                        <p className="mt-1 text-sm text-[var(--muted)]">
+                      <div className="md:order-5 md:col-auto">
+                        <StatusPill
+                          label={curriculumLabel(status)}
+                          tone={curriculumTone(status)}
+                        />
+                      </div>
+                      <div className="col-span-2 min-w-0 md:col-span-1">
+                        <p className="font-medium leading-5 text-[var(--foreground)] sm:leading-6">{course.title}</p>
+                        <p className="mt-1 text-xs text-[var(--muted)] sm:text-sm">
                           {courseKindLabels[course.kind]}
                           {course.prerequisites.length
                             ? ` • Tiên quyết: ${course.prerequisites.length} môn`
                             : ""}
                         </p>
-                        <div className="mt-2 flex flex-wrap gap-2">
+                        <div className="mt-2 flex flex-wrap gap-1.5 sm:gap-2">
                           <StatusPill
                             label={gpaPolicyLabel(course)}
                             tone={gpaPolicyTone(course)}
@@ -202,14 +208,8 @@ export function CurriculumPanel({
                           ) : null}
                         </div>
                       </div>
-                      <div className="text-sm text-[var(--foreground)]">{course.credits}</div>
-                      <div className="text-sm text-[var(--foreground)]">HK {course.suggestedTerm}</div>
-                      <div>
-                        <StatusPill
-                          label={curriculumLabel(status)}
-                          tone={curriculumTone(status)}
-                        />
-                      </div>
+                      <div className="text-xs text-[var(--foreground)] sm:text-sm">{course.credits} TC</div>
+                      <div className="text-xs text-[var(--foreground)] sm:text-sm">HK {course.suggestedTerm}</div>
                     </article>
                   );
                 })}

@@ -30,7 +30,8 @@
   --chart-grid: rgba(0, 25, 54, 0.08);
   --brand-gradient: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-primary-strong) 48%, var(--brand-navy) 100%);
   --sidebar-gradient: linear-gradient(180deg, var(--brand-navy) 0%, var(--brand-primary-strong) 54%, var(--brand-navy-deep) 100%);
-  --density-root-mobile: 16px;
+  --density-root-mobile: 14px;
+  --density-root-small-phone: 13.6px;
   --density-root-tablet: 14.4px;
   --density-root-desktop: 12.8px;
   --app-max-width: 93.75rem;
@@ -53,6 +54,12 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+@media (max-width: 380px) {
+  html {
+    font-size: var(--density-root-small-phone);
+  }
 }
 
 @media (min-width: 768px) {
@@ -141,6 +148,61 @@ button:disabled {
   animation-delay: var(--delay, 0ms);
 }
 
+.mobile-nav-bubble {
+  transform-origin: 1rem 0;
+  will-change: transform, opacity;
+}
+
+.mobile-nav-bubble-enter {
+  animation: mobile-bubble-pop 260ms cubic-bezier(0.2, 0.85, 0.25, 1) both;
+}
+
+.mobile-nav-bubble-exit {
+  pointer-events: none;
+  animation: mobile-bubble-collapse 220ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.mobile-dropdown-panel {
+  animation: mobile-dropdown-fall 220ms cubic-bezier(0.2, 0.85, 0.25, 1) both;
+  transform-origin: top right;
+}
+
+.mobile-bottom-nav-item {
+  transform: translateY(0);
+}
+
+.mobile-bottom-nav-item:active {
+  transform: scale(0.96);
+}
+
+.mobile-bottom-nav-pill {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--brand-primary);
+  box-shadow: 0 10px 24px rgba(0, 63, 136, 0.22);
+  opacity: 0;
+  transform: translateY(0.35rem) scale(0.76);
+  transition:
+    opacity 220ms cubic-bezier(0.2, 0.85, 0.25, 1),
+    transform 220ms cubic-bezier(0.2, 0.85, 0.25, 1),
+    box-shadow 220ms ease;
+}
+
+.mobile-bottom-nav-item.is-active .mobile-bottom-nav-pill {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.mobile-bottom-nav-item svg {
+  opacity: 0.88;
+}
+
+.mobile-bottom-nav-item.is-active svg {
+  opacity: 1;
+  transform: translateY(-0.08rem) scale(1.08);
+}
+
 .motion-enter {
   opacity: 0;
   transform: translateY(18px);
@@ -186,9 +248,13 @@ button:disabled {
 .grades-pager-stage {
   position: relative;
   overflow: hidden;
+  contain: paint;
+  isolation: isolate;
 }
 
 .grades-pager-page {
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
   will-change: transform, opacity;
 }
 
@@ -206,19 +272,19 @@ button:disabled {
 }
 
 .grades-pager-page-enter-forward {
-  animation: grades-page-enter-forward 360ms cubic-bezier(0.2, 0.85, 0.25, 1) both;
+  animation: grades-page-enter-forward 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .grades-pager-page-exit-forward {
-  animation: grades-page-exit-forward 240ms cubic-bezier(0.4, 0, 0.2, 1) both;
+  animation: grades-page-exit-forward 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .grades-pager-page-enter-backward {
-  animation: grades-page-enter-backward 360ms cubic-bezier(0.2, 0.85, 0.25, 1) both;
+  animation: grades-page-enter-backward 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .grades-pager-page-exit-backward {
-  animation: grades-page-exit-backward 240ms cubic-bezier(0.4, 0, 0.2, 1) both;
+  animation: grades-page-exit-backward 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .drawer-line {
@@ -264,6 +330,44 @@ button:disabled {
   }
 }
 
+@keyframes mobile-bubble-pop {
+  from {
+    opacity: 0;
+    border-radius: 999px;
+    transform: translate(-0.25rem, -0.35rem) scale(0.28);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+@keyframes mobile-bubble-collapse {
+  from {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    border-radius: 999px;
+    transform: translate(-0.25rem, -0.35rem) scale(0.36);
+  }
+}
+
+@keyframes mobile-dropdown-fall {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 @keyframes fill-soft {
   from {
     transform: scaleX(0);
@@ -286,49 +390,49 @@ button:disabled {
 
 @keyframes grades-page-enter-forward {
   from {
-    opacity: 0;
-    transform: translateX(2.625rem) scale(0.995);
+    opacity: 1;
+    transform: translate3d(100%, 0, 0);
   }
 
   to {
     opacity: 1;
-    transform: translateX(0) scale(1);
+    transform: translate3d(0, 0, 0);
   }
 }
 
 @keyframes grades-page-exit-forward {
   from {
     opacity: 1;
-    transform: translateX(0) scale(1);
+    transform: translate3d(0, 0, 0);
   }
 
   to {
-    opacity: 0;
-    transform: translateX(-2.625rem) scale(0.995);
+    opacity: 1;
+    transform: translate3d(-100%, 0, 0);
   }
 }
 
 @keyframes grades-page-enter-backward {
   from {
-    opacity: 0;
-    transform: translateX(-2.625rem) scale(0.995);
+    opacity: 1;
+    transform: translate3d(-100%, 0, 0);
   }
 
   to {
     opacity: 1;
-    transform: translateX(0) scale(1);
+    transform: translate3d(0, 0, 0);
   }
 }
 
 @keyframes grades-page-exit-backward {
   from {
     opacity: 1;
-    transform: translateX(0) scale(1);
+    transform: translate3d(0, 0, 0);
   }
 
   to {
-    opacity: 0;
-    transform: translateX(2.625rem) scale(0.995);
+    opacity: 1;
+    transform: translate3d(100%, 0, 0);
   }
 }
 
@@ -349,7 +453,13 @@ button:disabled {
   .motion-enter,
   .motion-page,
   .motion-card,
+  .mobile-nav-bubble,
+  .mobile-nav-bubble-enter,
+  .mobile-nav-bubble-exit,
+  .mobile-dropdown-panel,
   .grades-pager-page,
+  .mobile-bottom-nav-item,
+  .mobile-bottom-nav-pill,
   .hover-lift:hover {
     opacity: 1;
     transform: none;

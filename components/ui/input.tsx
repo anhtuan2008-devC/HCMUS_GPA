@@ -2,7 +2,7 @@ import clsx from "clsx";
 import type { InputHTMLAttributes, ReactNode, SelectHTMLAttributes, TextareaHTMLAttributes } from "react";
 
 const controlClassName =
-  "w-full rounded-2xl border border-[var(--line)] bg-white/85 px-4 py-3 text-sm text-[var(--foreground)] outline-none transition placeholder:text-[var(--muted)] focus:border-[var(--brand-primary)] focus:ring-4 focus:ring-[var(--focus-ring)]";
+  "w-full rounded-xl border border-[var(--line)] bg-white/85 px-3 py-2.5 text-sm text-[var(--foreground)] outline-none transition placeholder:text-[var(--muted)] focus:border-[var(--brand-primary)] focus:ring-4 focus:ring-[var(--focus-ring)] sm:rounded-2xl sm:px-4 sm:py-3";
 
 export function Field({
   label,

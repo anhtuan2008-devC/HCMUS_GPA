@@ -258,17 +258,17 @@ export function PlannerPanel({
     .reduce((sum, course) => sum + course.credits, 0);
 
   return (
-    <div className="space-y-5">
-      <PanelCard className="space-y-6">
+    <div className="space-y-3 sm:space-y-5">
+      <PanelCard className="space-y-4 sm:space-y-6">
         <div className="flex items-start gap-3">
           <IconBadge tone="brand">
             <CalendarCheck className="h-5 w-5" />
           </IconBadge>
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted)] sm:text-sm sm:tracking-[0.2em]">
               Kế hoạch dùng thật
             </p>
-            <h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl text-[var(--foreground)]">
+            <h2 className="mt-2 font-[family-name:var(--font-display)] text-2xl text-[var(--foreground)] sm:mt-3 sm:text-3xl">
               Bắt đầu từ kế hoạch chuẩn, rồi chỉnh theo nhịp của bạn.
             </h2>
             <p className="mt-3 max-w-3xl text-sm leading-7 text-[var(--muted)]">
@@ -278,7 +278,7 @@ export function PlannerPanel({
           </div>
         </div>
 
-        <div className="grid gap-4 lg:grid-cols-[0.8fr_1fr]">
+        <div className="grid gap-3 sm:gap-4 lg:grid-cols-[0.8fr_1fr]">
           <label className="block">
             <span className="mb-2 block text-sm font-medium text-[var(--foreground)]">Học kỳ mục tiêu</span>
             <select
@@ -290,7 +290,7 @@ export function PlannerPanel({
                 const termTemplate = termTemplates.find((item) => item.termNumber === termNumber);
                 onSetCourseIds(plan?.courseIds ?? termTemplate?.courses.map((item) => item.courseId) ?? []);
               }}
-              className="w-full rounded-2xl border border-[var(--line)] bg-white/85 px-4 py-3 outline-none transition focus:border-[var(--brand-primary)] focus:ring-4 focus:ring-[var(--focus-ring)]"
+              className="w-full rounded-xl border border-[var(--line)] bg-white/85 px-3 py-2.5 outline-none transition focus:border-[var(--brand-primary)] focus:ring-4 focus:ring-[var(--focus-ring)] sm:rounded-2xl sm:px-4 sm:py-3"
             >
               {[plannerTerm, ...termOptions.map((term) => term.label), ...plans.map((plan) => plan.termLabel)]
                 .filter((value, index, values) => value && values.indexOf(value) === index)
@@ -307,33 +307,33 @@ export function PlannerPanel({
             <input
               value={plannerFocus}
               onChange={(event) => onPlannerFocusChange(event.target.value)}
-              className="w-full rounded-2xl border border-[var(--line)] bg-white/85 px-4 py-3 outline-none transition focus:border-[var(--brand-primary)] focus:ring-4 focus:ring-[var(--focus-ring)]"
+              className="w-full rounded-xl border border-[var(--line)] bg-white/85 px-3 py-2.5 outline-none transition focus:border-[var(--brand-primary)] focus:ring-4 focus:ring-[var(--focus-ring)] sm:rounded-2xl sm:px-4 sm:py-3"
               placeholder="VD: ưu tiên môn cốt lõi và giữ nhịp học đều"
             />
           </label>
         </div>
 
-        <div className="grid gap-3 rounded-[1.5rem] border border-[var(--line)] bg-[var(--surface-tint)] px-4 py-4 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-2 rounded-[1.15rem] border border-[var(--line)] bg-[var(--surface-tint)] px-3 py-3 sm:grid-cols-4 sm:gap-3 sm:rounded-[1.5rem] sm:px-4 sm:py-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">Template</p>
-            <p className="mt-2 text-2xl font-bold text-[var(--foreground)]">{templateCourseIds.length}</p>
+            <p className="mt-1 text-xl font-bold text-[var(--foreground)] sm:mt-2 sm:text-2xl">{templateCourseIds.length}</p>
             <p className="text-sm text-[var(--muted)]">môn gợi ý</p>
           </div>
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">Đã chọn</p>
-            <p className="mt-2 text-2xl font-bold text-[var(--foreground)]">{selectedCourseIds.length}</p>
+            <p className="mt-1 text-xl font-bold text-[var(--foreground)] sm:mt-2 sm:text-2xl">{selectedCourseIds.length}</p>
             <p className="text-sm text-[var(--muted)]">học phần</p>
           </div>
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">Tín chỉ</p>
-            <p className="mt-2 text-2xl font-bold text-[var(--foreground)]">{sumCredits(selectedCourses)}</p>
+            <p className="mt-1 text-xl font-bold text-[var(--foreground)] sm:mt-2 sm:text-2xl">{sumCredits(selectedCourses)}</p>
             <p className="text-sm text-[var(--muted)]">dự kiến</p>
           </div>
-          <div className="flex items-end">
+          <div className="col-span-2 flex items-end sm:col-span-1">
             <button
               type="button"
               onClick={replaceWithTemplate}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[var(--line)] bg-white px-4 py-3 text-sm font-semibold text-[var(--brand-primary)] transition hover:bg-white/80"
+              className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-full border border-[var(--line)] bg-white px-3 py-2 text-sm font-semibold text-[var(--brand-primary)] transition hover:bg-white/80 sm:px-4 sm:py-3"
             >
               <Sparkles className="h-4 w-4" />
               Áp dụng kế hoạch chuẩn
@@ -341,39 +341,39 @@ export function PlannerPanel({
           </div>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-4">
-          <article className="rounded-[1.5rem] border border-[var(--line)] bg-white/82 px-4 py-4">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
+          <article className="rounded-[1.15rem] border border-[var(--line)] bg-white/82 px-3 py-3 sm:rounded-[1.5rem] sm:px-4 sm:py-4">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">GPA kỳ dự kiến</p>
-            <p className="mt-2 text-2xl font-bold text-[var(--foreground)]">{termProjection.gpa10.toFixed(3)}</p>
+            <p className="mt-1 text-xl font-bold text-[var(--foreground)] sm:mt-2 sm:text-2xl">{termProjection.gpa10.toFixed(3)}</p>
             <p className="text-sm text-[var(--muted)]">{termProjection.gpa4.toFixed(2)} hệ 4</p>
           </article>
-          <article className="rounded-[1.5rem] border border-[var(--line)] bg-white/82 px-4 py-4">
+          <article className="rounded-[1.15rem] border border-[var(--line)] bg-white/82 px-3 py-3 sm:rounded-[1.5rem] sm:px-4 sm:py-4">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">CPA sau kỳ này</p>
-            <p className="mt-2 text-2xl font-bold text-[var(--foreground)]">{cpaProjection.gpa10.toFixed(3)}</p>
+            <p className="mt-1 text-xl font-bold text-[var(--foreground)] sm:mt-2 sm:text-2xl">{cpaProjection.gpa10.toFixed(3)}</p>
             <p className="text-sm text-[var(--muted)]">{cpaProjection.gpa4.toFixed(2)} hệ 4</p>
           </article>
-          <article className="rounded-[1.5rem] border border-[var(--line)] bg-white/82 px-4 py-4">
+          <article className="rounded-[1.15rem] border border-[var(--line)] bg-white/82 px-3 py-3 sm:rounded-[1.5rem] sm:px-4 sm:py-4">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">Tín chỉ GPA</p>
-            <p className="mt-2 text-2xl font-bold text-[var(--foreground)]">{termProjection.attemptedCredits}</p>
+            <p className="mt-1 text-xl font-bold text-[var(--foreground)] sm:mt-2 sm:text-2xl">{termProjection.attemptedCredits}</p>
             <p className="text-sm text-[var(--muted)]">từ điểm giả sử</p>
           </article>
-          <article className="rounded-[1.5rem] border border-[var(--line)] bg-white/82 px-4 py-4">
+          <article className="rounded-[1.15rem] border border-[var(--line)] bg-white/82 px-3 py-3 sm:rounded-[1.5rem] sm:px-4 sm:py-4">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">Tín chỉ hoàn thành</p>
-            <p className="mt-2 text-2xl font-bold text-[var(--foreground)]">{expectedProgressCredits}</p>
+            <p className="mt-1 text-xl font-bold text-[var(--foreground)] sm:mt-2 sm:text-2xl">{expectedProgressCredits}</p>
             <p className="text-sm text-[var(--muted)]">nếu đạt như dự kiến</p>
           </article>
         </div>
       </PanelCard>
 
-      <div className="grid gap-5 xl:grid-cols-[1.1fr_minmax(20rem,0.9fr)]">
+      <div className="grid gap-3 sm:gap-5 xl:grid-cols-[1.1fr_minmax(20rem,0.9fr)]">
         <PanelCard className="space-y-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <h3 className="text-xl font-semibold text-[var(--foreground)]">Danh sách môn trong kế hoạch</h3>
+            <h3 className="text-lg font-semibold text-[var(--foreground)] sm:text-xl">Danh sách môn trong kế hoạch</h3>
             <button
               type="button"
               onClick={() => onSave(buildCourseItemsForSave())}
               disabled={isSaving}
-              className="inline-flex min-h-[max(2.75rem,42px)] min-w-[max(10rem,128px)] items-center justify-center gap-2 rounded-full bg-[var(--brand-primary)] px-5 py-3 text-sm font-semibold text-white shadow-[0_14px_34px_rgba(0,63,136,0.24)] transition hover:bg-[var(--brand-primary-strong)] disabled:opacity-70"
+              className="inline-flex min-h-[max(2.5rem,42px)] min-w-[max(8rem,112px)] items-center justify-center gap-2 rounded-full bg-[var(--brand-primary)] px-4 py-2.5 text-sm font-semibold text-white shadow-[0_14px_34px_rgba(0,63,136,0.24)] transition hover:bg-[var(--brand-primary-strong)] disabled:opacity-70 sm:min-h-[max(2.75rem,42px)] sm:min-w-[max(10rem,128px)] sm:px-5 sm:py-3"
             >
               {isSaving ? "Đang lưu kế hoạch..." : "Lưu kế hoạch học kỳ"}
               {!isSaving ? <Save className="h-4 w-4" /> : null}
@@ -385,7 +385,7 @@ export function PlannerPanel({
             <input
               value={courseQuery}
               onChange={(event) => setCourseQuery(event.target.value)}
-              className="w-full rounded-2xl border border-[var(--line)] bg-white/85 py-3 pl-11 pr-4 outline-none transition focus:border-[var(--brand-primary)] focus:ring-4 focus:ring-[var(--focus-ring)]"
+              className="w-full rounded-xl border border-[var(--line)] bg-white/85 py-2.5 pl-10 pr-3 outline-none transition focus:border-[var(--brand-primary)] focus:ring-4 focus:ring-[var(--focus-ring)] sm:rounded-2xl sm:py-3 sm:pl-11 sm:pr-4"
               placeholder="Tìm để thêm môn vào kế hoạch"
             />
             {searchResults.length ? (
@@ -421,15 +421,15 @@ export function PlannerPanel({
                 return (
                   <article
                     key={`${course.id}-${index}`}
-                    className={`hover-lift rounded-[1.5rem] border px-4 py-4 ${
+                    className={`hover-lift rounded-[1rem] border px-2.5 py-2.5 text-[0.78rem] sm:rounded-[1.5rem] sm:px-4 sm:py-4 sm:text-sm ${
                       blocked ? "border-amber-200 bg-amber-50" : "border-[var(--line)] bg-white/82"
                     }`}
                   >
                     <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                       <div>
-                        <p className="text-xs font-semibold text-[var(--muted)]">{course.code}</p>
-                        <p className="mt-2 font-semibold leading-6 text-[var(--foreground)]">{course.title}</p>
-                        <div className="mt-3 flex flex-wrap gap-2">
+                        <p className="text-[0.68rem] font-semibold text-[var(--muted)] sm:text-xs">{course.code}</p>
+                        <p className="mt-1.5 font-semibold leading-5 text-[var(--foreground)] sm:mt-2 sm:leading-6">{course.title}</p>
+                        <div className="mt-2 flex flex-wrap gap-1.5 sm:mt-3 sm:gap-2">
                           <StatusPill label={`${course.credits} tín chỉ`} tone="neutral" />
                           <StatusPill label={courseKindLabels[course.kind]} tone={course.kind === "required" ? "success" : "warning"} />
                           <StatusPill
@@ -439,20 +439,20 @@ export function PlannerPanel({
                           {isTemplateCourse ? <StatusPill label="Từ kế hoạch chuẩn" tone="success" /> : null}
                           {blocked ? <StatusPill label="Cần rà tiên quyết" tone="warning" /> : null}
                         </div>
-                        <div className="mt-4 grid gap-3 sm:grid-cols-[9.375rem_10rem]">
+                        <div className="mt-2.5 grid grid-cols-2 gap-2 sm:mt-4 sm:grid-cols-[9.375rem_10rem] sm:gap-3">
                           {usePassFail ? (
                             <select
                               value={draft.gradeInputMode}
                               onChange={(event) =>
                                 updateExpectedDraft(course.id, { gradeInputMode: event.target.value as GradeInputMode })
                               }
-                              className="rounded-2xl border border-[var(--line)] bg-white px-4 py-2.5 text-sm outline-none transition focus:border-[var(--brand-primary)] focus:ring-4 focus:ring-[var(--focus-ring)]"
+                              className="min-h-10 rounded-xl border border-[var(--line)] bg-white px-2.5 py-2 text-sm outline-none transition focus:border-[var(--brand-primary)] focus:ring-4 focus:ring-[var(--focus-ring)] sm:rounded-2xl sm:px-4 sm:py-2.5"
                             >
                               <option value="numeric">Giả sử điểm</option>
                               <option value="pass_fail">Đạt/Không đạt</option>
                             </select>
                           ) : (
-                            <div className="rounded-2xl border border-[var(--line)] bg-white px-4 py-2.5 text-sm font-semibold text-[var(--muted)]">
+                            <div className="min-h-10 rounded-xl border border-[var(--line)] bg-white px-2.5 py-2 text-sm font-semibold text-[var(--muted)] sm:rounded-2xl sm:px-4 sm:py-2.5">
                               Giả sử điểm
                             </div>
                           )}
@@ -464,7 +464,7 @@ export function PlannerPanel({
                                   passFailStatus: event.target.value as Exclude<RecordStatus, "planned">,
                                 })
                               }
-                              className="rounded-2xl border border-[var(--line)] bg-white px-4 py-2.5 text-sm outline-none transition focus:border-[var(--brand-primary)] focus:ring-4 focus:ring-[var(--focus-ring)]"
+                              className="min-h-10 rounded-xl border border-[var(--line)] bg-white px-2.5 py-2 text-sm outline-none transition focus:border-[var(--brand-primary)] focus:ring-4 focus:ring-[var(--focus-ring)] sm:rounded-2xl sm:px-4 sm:py-2.5"
                             >
                               <option value="passed">Đạt</option>
                               <option value="failed">Không đạt</option>
@@ -477,7 +477,7 @@ export function PlannerPanel({
                               step={0.001}
                               value={draft.score10}
                               onChange={(event) => updateExpectedDraft(course.id, { score10: event.target.value })}
-                              className="rounded-2xl border border-[var(--line)] bg-white px-4 py-2.5 text-sm outline-none transition focus:border-[var(--brand-primary)] focus:ring-4 focus:ring-[var(--focus-ring)]"
+                              className="min-h-10 rounded-xl border border-[var(--line)] bg-white px-2.5 py-2 text-sm outline-none transition focus:border-[var(--brand-primary)] focus:ring-4 focus:ring-[var(--focus-ring)] sm:rounded-2xl sm:px-4 sm:py-2.5"
                               placeholder="VD: 8.000"
                             />
                           )}
@@ -537,7 +537,7 @@ export function PlannerPanel({
             <div className="space-y-3">
               {suggestedPlan.blockedCourses.length ? (
                 suggestedPlan.blockedCourses.map((course) => (
-                  <article key={course.id} className="rounded-[1.5rem] border border-amber-200 bg-amber-50 px-4 py-4">
+                  <article key={course.id} className="rounded-[1rem] border border-amber-200 bg-amber-50 px-3 py-3 text-[0.78rem] sm:rounded-[1.5rem] sm:px-4 sm:py-4 sm:text-sm">
                     <p className="font-semibold text-amber-950">{course.code} - {course.title}</p>
                     <p className="mt-1 text-sm text-amber-900">
                       Chưa đủ điều kiện tiên quyết ({course.prerequisites.length} môn).
@@ -557,7 +557,7 @@ export function PlannerPanel({
             <div className="space-y-3">
               {plans.length ? (
                 plans.map((plan) => (
-                  <article key={plan.id} className="hover-lift rounded-[1.5rem] border border-[var(--line)] bg-white/82 px-4 py-4">
+                  <article key={plan.id} className="hover-lift rounded-[1rem] border border-[var(--line)] bg-white/82 px-3 py-3 text-[0.78rem] sm:rounded-[1.5rem] sm:px-4 sm:py-4 sm:text-sm">
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <p className="font-semibold text-[var(--foreground)]">{plan.termLabel}</p>

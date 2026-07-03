@@ -21,17 +21,17 @@ export function InsightsPanel({
   const projectedRank = getAcademicRank(projectedGpa10);
 
   return (
-    <div className="grid gap-5 xl:grid-cols-[1.05fr_minmax(20rem,0.95fr)]">
-      <PanelCard className="space-y-6">
+    <div className="grid gap-3 sm:gap-5 xl:grid-cols-[1.05fr_minmax(20rem,0.95fr)]">
+      <PanelCard className="space-y-4 sm:space-y-6">
         <div className="flex items-start gap-3">
           <IconBadge tone="brand">
             <Target className="h-5 w-5" />
           </IconBadge>
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted)] sm:text-sm sm:tracking-[0.2em]">
               Mô phỏng mục tiêu
             </p>
-            <h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl text-[var(--foreground)]">
+            <h2 className="mt-2 font-[family-name:var(--font-display)] text-2xl text-[var(--foreground)] sm:mt-3 sm:text-3xl">
               Nếu giữ nhịp điểm này, GPA sẽ đi đến đâu?
             </h2>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-[var(--muted)]">
@@ -41,7 +41,7 @@ export function InsightsPanel({
           </div>
         </div>
 
-        <label className="block rounded-[1.5rem] border border-[var(--line)] bg-white/82 px-4 py-4">
+        <label className="block rounded-[1.15rem] border border-[var(--line)] bg-white/82 px-3 py-3 sm:rounded-[1.5rem] sm:px-4 sm:py-4">
           <span className="mb-3 flex items-center justify-between gap-3 text-sm font-medium text-[var(--foreground)]">
             <span>Điểm hệ 10 kỳ vọng cho các môn còn lại</span>
             <span className="rounded-full bg-[var(--orange-soft)] px-3 py-1 font-semibold text-orange-700">
@@ -59,28 +59,28 @@ export function InsightsPanel({
           />
         </label>
 
-        <div className="grid gap-4 sm:grid-cols-3">
-          <article className="hover-lift rounded-[1.75rem] border border-[var(--line)] bg-white/85 px-4 py-4">
+        <div className="grid grid-cols-3 gap-2 sm:gap-4">
+          <article className="hover-lift rounded-[1.15rem] border border-[var(--line)] bg-white/85 px-3 py-3 sm:rounded-[1.75rem] sm:px-4 sm:py-4">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">
               GPA hệ 10 dự báo
             </p>
-            <p className="mt-3 text-3xl font-semibold text-[var(--foreground)]">
+            <p className="mt-2 text-xl font-semibold text-[var(--foreground)] sm:mt-3 sm:text-3xl">
               {projectedGpa10.toFixed(3)}
             </p>
           </article>
-          <article className="hover-lift rounded-[1.75rem] border border-[var(--line)] bg-white/85 px-4 py-4">
+          <article className="hover-lift rounded-[1.15rem] border border-[var(--line)] bg-white/85 px-3 py-3 sm:rounded-[1.75rem] sm:px-4 sm:py-4">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">
               GPA hệ 4 dự báo
             </p>
-            <p className="mt-3 text-3xl font-semibold text-[var(--foreground)]">
+            <p className="mt-2 text-xl font-semibold text-[var(--foreground)] sm:mt-3 sm:text-3xl">
               {projectedGpa4.toFixed(2)}
             </p>
           </article>
-          <article className="hover-lift rounded-[1.75rem] border border-[var(--line)] bg-[var(--surface-tint)] px-4 py-4">
+          <article className="hover-lift rounded-[1.15rem] border border-[var(--line)] bg-[var(--surface-tint)] px-3 py-3 sm:rounded-[1.75rem] sm:px-4 sm:py-4">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">
               Xếp loại dự kiến
             </p>
-            <p className="mt-3 text-3xl font-semibold text-[var(--foreground)]">
+            <p className="mt-2 text-xl font-semibold text-[var(--foreground)] sm:mt-3 sm:text-3xl">
               {projectedRank}
             </p>
           </article>

@@ -189,31 +189,34 @@ export function DashboardPanel({
   ];
 
   return (
-    <div className="space-y-5">
-      <div className="grid gap-5 xl:grid-cols-[1.15fr_0.8fr_0.8fr]">
+    <div className="space-y-3 sm:space-y-5">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-1 sm:gap-5 xl:grid-cols-[1.15fr_0.8fr_0.8fr]">
         <button
           type="button"
           onClick={onOpenGpaCalculation}
-          className="metric-card motion-card group relative block w-full overflow-hidden rounded-[2rem] px-6 py-6 text-left text-white outline-none transition focus:ring-4 focus:ring-[var(--focus-ring)]"
+          className="metric-card motion-card group relative block w-full overflow-hidden rounded-[1.1rem] px-3 py-3 text-left text-white outline-none transition focus:ring-4 focus:ring-[var(--focus-ring)] sm:rounded-[2rem] sm:px-6 sm:py-6"
           aria-label="Xem cách tính GPA"
         >
           <div className="absolute -right-12 bottom-0 h-44 w-44 rounded-full border border-white/10" />
-          <div className="relative grid gap-6 sm:grid-cols-[1fr_10rem] sm:items-center">
+          <div className="relative grid gap-3 sm:grid-cols-[1fr_10rem] sm:items-center sm:gap-6">
             <div>
-              <p className="text-sm font-medium text-white/72">Xin chào, {profile.fullName}</p>
-              <h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl font-bold">
+              <p className="text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-white/68 sm:hidden">
+                GPA hiện tại
+              </p>
+              <p className="hidden text-sm font-medium text-white/72 sm:block">Xin chào, {profile.fullName}</p>
+              <h2 className="hidden font-[family-name:var(--font-display)] font-bold sm:mt-3 sm:block sm:text-3xl">
                 Tổng quan kết quả học tập của bạn
               </h2>
-              <div className="mt-8">
-                <p className="text-sm text-white/72">GPA hệ 4</p>
+              <div className="mt-2 sm:mt-8">
+                <p className="text-xs text-white/72 sm:text-sm">GPA hệ 4</p>
                 <div className="mt-2 flex items-end gap-2">
-                  <p className="text-6xl font-bold tracking-tight">
+                  <p className="text-3xl font-bold tracking-tight sm:text-6xl">
                     <AnimatedNumber value={summary.gpa4} decimals={2} />
                   </p>
-                  <p className="pb-2 text-xl text-white/70">/ 4.0</p>
+                  <p className="pb-0.5 text-xs text-white/70 sm:pb-2 sm:text-xl">/ 4.0</p>
                 </div>
               </div>
-              <div className="mt-6 inline-flex rounded-2xl border border-white/15 bg-white/10 px-4 py-2 text-sm text-white/86">
+              <div className="mt-3 inline-flex max-w-full rounded-lg border border-white/15 bg-white/10 px-2.5 py-1.5 text-[0.68rem] text-white/86 sm:mt-6 sm:rounded-2xl sm:px-4 sm:py-2 sm:text-sm">
                 {summary.attemptedCredits ? (
                   <>
                     <AnimatedNumber value={summary.attemptedCredits} /> tín chỉ đã tính GPA
@@ -222,30 +225,31 @@ export function DashboardPanel({
                   "Bắt đầu bằng điểm số đầu tiên"
                 )}
               </div>
-              <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-white/82 transition group-hover:text-white">
-                Xem cách tính GPA
+              <span className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-white/82 transition group-hover:text-white sm:mt-4 sm:gap-2 sm:text-sm">
+                <span className="sm:hidden">Cách tính</span>
+                <span className="hidden sm:inline">Xem cách tính GPA</span>
                 <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
               </span>
             </div>
-            <div className="rounded-[1.5rem] border border-white/12 bg-white/10 p-5">
-              <p className="text-sm text-white/70">GPA hệ 10</p>
-              <p className="mt-2 text-3xl font-semibold">
+            <div className="rounded-[0.95rem] border border-white/12 bg-white/10 p-2.5 sm:rounded-[1.5rem] sm:p-5">
+              <p className="text-xs text-white/70 sm:text-sm">GPA hệ 10</p>
+              <p className="mt-1 text-lg font-semibold sm:mt-2 sm:text-3xl">
                 <AnimatedNumber value={summary.gpa10} decimals={3} /> / 10
               </p>
-              <div className="my-5 h-px bg-white/12" />
-              <p className="text-sm text-white/70">Xếp loại hiện tại</p>
-              <p className="mt-2 text-2xl font-semibold text-blue-100">{rank}</p>
+              <div className="my-2 h-px bg-white/12 sm:my-5" />
+              <p className="text-xs text-white/70 sm:text-sm">Xếp loại</p>
+              <p className="mt-1 truncate text-sm font-semibold text-blue-100 sm:mt-2 sm:text-2xl">{rank}</p>
             </div>
           </div>
         </button>
 
-        <PanelCard className="space-y-4" style={{ "--delay": "80ms" } as React.CSSProperties}>
+        <PanelCard className="space-y-2 rounded-[1.1rem] px-3 py-3 sm:space-y-4 sm:rounded-[2rem] sm:px-6 sm:py-6" style={{ "--delay": "80ms" } as React.CSSProperties}>
           <div className="flex items-start justify-between gap-3">
             <div>
-              <p className="text-sm font-semibold text-[var(--foreground)]">Tiến độ tích lũy tín chỉ</p>
-              <p className="mt-1 text-xs text-[var(--muted)]">So với mục tiêu của chương trình</p>
+              <p className="text-xs font-semibold text-[var(--foreground)] sm:text-sm">Tín chỉ</p>
+              <p className="mt-1 hidden text-xs text-[var(--muted)] sm:block">So với mục tiêu của chương trình</p>
             </div>
-            <span className="inline-flex items-center rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800 ring-1 ring-emerald-200">
+            <span className="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-[0.65rem] font-semibold text-emerald-800 ring-1 ring-emerald-200 sm:px-3 sm:py-1 sm:text-xs">
               {animatedCompletionRate.toFixed(1)}%
             </span>
           </div>
@@ -253,8 +257,9 @@ export function DashboardPanel({
             value={animatedCompletionRate}
             label={`${animatedCompletionRate.toFixed(1)}%`}
             sublabel={`${Math.round(animatedEarnedCredits)} / ${progress.totalCredits} tín chỉ`}
+            size="compact"
           />
-          <div className="grid gap-2 text-sm">
+          <div className="grid gap-1 text-[0.68rem] sm:grid-cols-1 sm:gap-2 sm:text-sm">
             <div className="flex items-center justify-between">
               <span className="text-[var(--muted)]">Đã tích lũy</span>
               <span className="font-semibold text-[var(--foreground)]">{Math.round(animatedEarnedCredits)}</span>
@@ -266,7 +271,7 @@ export function DashboardPanel({
           </div>
         </PanelCard>
 
-        <PanelCard className="space-y-3" style={{ "--delay": "140ms" } as React.CSSProperties}>
+        <PanelCard className="col-span-2 grid grid-cols-3 gap-2 px-3 py-3 sm:col-auto sm:block sm:space-y-3 sm:px-6 sm:py-6" style={{ "--delay": "140ms" } as React.CSSProperties}>
           {watchItems.map((item) => {
             const Icon = item.icon;
 
@@ -275,12 +280,12 @@ export function DashboardPanel({
                 key={item.label}
                 type="button"
                 onClick={() => onNavigate(item.view)}
-                className="hover-lift grid min-h-[5.75rem] w-full grid-cols-[2.75rem_4.25rem_minmax(0,1fr)] items-center gap-3 rounded-[1.5rem] border border-[var(--line)] bg-white/80 px-4 py-3 text-left"
+                className="hover-lift flex min-h-[5.2rem] w-full flex-col items-center justify-center gap-1.5 rounded-[1.15rem] border border-[var(--line)] bg-white/80 px-2 py-2 text-center sm:grid sm:min-h-[5.75rem] sm:grid-cols-[2.75rem_4.25rem_minmax(0,1fr)] sm:items-center sm:gap-3 sm:rounded-[1.5rem] sm:px-4 sm:py-3 sm:text-left"
               >
                 <IconBadge tone={item.tone}>
                   <Icon className="h-5 w-5" />
                 </IconBadge>
-                <p className="text-center text-2xl font-bold tabular-nums text-[var(--foreground)]">
+                <p className="text-center text-xl font-bold tabular-nums text-[var(--foreground)] sm:text-2xl">
                   <AnimatedNumber value={item.value} />
                 </p>
                 <div className="min-w-0">
@@ -288,7 +293,7 @@ export function DashboardPanel({
                     {item.label}
                   </p>
                   <span
-                    className="mt-2 inline-flex h-7 w-[7rem] max-w-full items-center justify-center gap-1 rounded-full bg-[var(--surface-tint)] px-3 text-xs font-semibold text-[var(--brand-primary)] ring-1 ring-[var(--line)]"
+                    className="mt-2 hidden h-7 w-[7rem] max-w-full items-center justify-center gap-1 rounded-full bg-[var(--surface-tint)] px-3 text-xs font-semibold text-[var(--brand-primary)] ring-1 ring-[var(--line)] sm:inline-flex"
                     title={item.action}
                   >
                     <span className="truncate">{item.action}</span>
@@ -348,13 +353,13 @@ export function DashboardPanel({
       ) : null}
 
       <PanelCard className="space-y-5" style={{ "--delay": "190ms" } as React.CSSProperties}>
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex items-start gap-3">
             <IconBadge tone="brand">
               <CalendarDays className="h-5 w-5" />
             </IconBadge>
             <div>
-              <h3 className="text-xl font-semibold text-[var(--foreground)]">
+              <h3 className="text-lg font-semibold text-[var(--foreground)] sm:text-xl">
                 {savedPlan ? "Kế hoạch đã lưu" : "Chưa có kế hoạch đã lưu"}
               </h3>
               <p className="mt-1 text-sm text-[var(--muted)]">
@@ -369,7 +374,7 @@ export function DashboardPanel({
           <button
             type="button"
             onClick={() => onNavigate("planner")}
-            className="inline-flex items-center justify-center gap-2 rounded-full border border-[var(--line)] bg-white/80 px-4 py-2.5 text-sm font-semibold text-[var(--brand-primary)] transition hover:bg-white"
+            className="inline-flex min-h-10 items-center justify-center gap-2 rounded-full border border-[var(--line)] bg-white/80 px-4 py-2 text-sm font-semibold text-[var(--brand-primary)] transition hover:bg-white sm:py-2.5"
           >
             {savedPlan ? "Xem kế hoạch chi tiết" : "Tạo kế hoạch học kỳ"}
             <ArrowRight className="h-4 w-4" />
@@ -381,14 +386,14 @@ export function DashboardPanel({
             planCourses.map(({ course, item }) => (
               <article
                 key={course.id}
-                className="hover-lift min-w-[13.75rem] rounded-[1.5rem] border border-[var(--line)] bg-white/82 px-4 py-4"
+                className="hover-lift min-w-[11.5rem] rounded-[1.15rem] border border-[var(--line)] bg-white/82 px-3 py-3 sm:min-w-[13.75rem] sm:rounded-[1.5rem] sm:px-4 sm:py-4"
               >
                 <p className="text-xs font-semibold text-[var(--muted)]">{course.code}</p>
-                <h4 className="mt-3 line-clamp-2 min-h-12 font-semibold leading-6 text-[var(--foreground)]">
+                <h4 className="mt-2 line-clamp-2 min-h-10 font-semibold leading-5 text-[var(--foreground)] sm:mt-3 sm:min-h-12 sm:leading-6">
                   {course.title}
                 </h4>
-                <p className="mt-3 text-sm text-[var(--muted)]">{course.credits} tín chỉ</p>
-                <div className="mt-3 flex flex-wrap gap-2">
+                <p className="mt-2 text-sm text-[var(--muted)] sm:mt-3">{course.credits} tín chỉ</p>
+                <div className="mt-2 flex flex-wrap gap-1.5 sm:mt-3 sm:gap-2">
                   <StatusPill
                     label={courseKindLabels[course.kind]}
                     tone={course.kind === "required" ? "success" : "warning"}
@@ -419,11 +424,11 @@ export function DashboardPanel({
         </div>
       </PanelCard>
 
-      <div className="grid gap-5 xl:grid-cols-[0.9fr_1.1fr]">
+      <div className="grid gap-3 sm:gap-5 xl:grid-cols-[0.9fr_1.1fr]">
         <PanelCard className="space-y-4" style={{ "--delay": "240ms" } as React.CSSProperties}>
           <div className="flex items-start justify-between gap-3">
             <div>
-              <h3 className="text-xl font-semibold text-[var(--foreground)]">Tiến độ chương trình đào tạo</h3>
+              <h3 className="text-lg font-semibold text-[var(--foreground)] sm:text-xl">Tiến độ chương trình đào tạo</h3>
               <p className="mt-1 text-sm text-[var(--muted)]">{program.name} · {program.totalCredits} tín chỉ</p>
             </div>
             <IconBadge tone="brand">
@@ -431,7 +436,7 @@ export function DashboardPanel({
             </IconBadge>
           </div>
 
-          <div className="overflow-hidden rounded-[1.5rem] border border-[var(--line)] bg-white/72">
+          <div className="overflow-hidden rounded-[1.15rem] border border-[var(--line)] bg-white/72 sm:rounded-[1.5rem]">
             <div className="hidden grid-cols-[1fr_5.5rem_5.5rem_6.875rem] gap-3 border-b border-[var(--line)] px-4 py-3 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)] md:grid">
               <span>Nhóm kiến thức</span>
               <span>Yêu cầu</span>
@@ -442,14 +447,14 @@ export function DashboardPanel({
               {progress.groupProgress.map((group) => (
                 <article
                   key={group.groupId}
-                  className="grid gap-3 px-4 py-4 md:grid-cols-[1fr_5.5rem_5.5rem_6.875rem] md:items-center"
+                  className="grid grid-cols-[minmax(0,1fr)_auto] gap-1.5 px-2.5 py-2.5 text-[0.72rem] sm:gap-2 sm:px-4 sm:py-4 sm:text-sm md:grid-cols-[1fr_5.5rem_5.5rem_6.875rem] md:items-center md:gap-3"
                 >
-                  <p className="font-semibold text-[var(--foreground)]">{group.title}</p>
-                  <p className="text-sm text-[var(--muted)]">{group.requiredCredits} TC</p>
-                  <p className="text-sm text-[var(--muted)]">{group.earnedCredits} TC</p>
-                  <div className="space-y-2">
+                  <p className="col-span-2 font-semibold leading-4 text-[var(--foreground)] sm:leading-5 md:col-span-1">{group.title}</p>
+                  <p className="text-[0.72rem] text-[var(--muted)] sm:text-sm">{group.requiredCredits} TC</p>
+                  <p className="text-[0.72rem] text-[var(--muted)] sm:text-sm">{group.earnedCredits} TC</p>
+                  <div className="col-span-2 space-y-2 md:col-span-1">
                     <MeterBar value={group.completionRate} />
-                    <p className="text-right text-xs font-semibold text-[var(--brand-primary)]">{group.completionRate}%</p>
+                    <p className="text-right text-[0.68rem] font-semibold text-[var(--brand-primary)] sm:text-xs">{group.completionRate}%</p>
                   </div>
                 </article>
               ))}
@@ -460,7 +465,7 @@ export function DashboardPanel({
         <PanelCard className="space-y-4" style={{ "--delay": "300ms" } as React.CSSProperties}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <h3 className="text-xl font-semibold text-[var(--foreground)]">Dự báo GPA theo học kỳ</h3>
+              <h3 className="text-lg font-semibold text-[var(--foreground)] sm:text-xl">Dự báo GPA theo học kỳ</h3>
               <p className="mt-1 text-sm text-[var(--muted)]">Theo dõi xu hướng để điều chỉnh nhịp học sớm hơn.</p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
@@ -493,7 +498,7 @@ export function DashboardPanel({
               </button>
             </div>
           </div>
-          <div className="h-80">
+          <div className="h-64 sm:h-80">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData} margin={{ left: -18, right: 12, top: 14, bottom: 8 }}>
                 <defs>

@@ -56,7 +56,7 @@ type SwipeStart = {
   y: number;
 };
 
-const GRADES_PAGE_ANIMATION_MS = 360;
+const GRADES_PAGE_ANIMATION_MS = 320;
 const GRADES_SWIPE_MIN_DISTANCE = 70;
 const GRADES_SWIPE_MAX_VERTICAL_DISTANCE = 45;
 
@@ -76,7 +76,6 @@ function statusTone(status: RecordStatus) {
       return "warning" as const;
   }
 }
-
 function groupAttemptsByTerm(attempts: StudentCourseAttempt[]) {
   const grouped = new Map<string, StudentCourseAttempt[]>();
 
@@ -121,7 +120,6 @@ function isInteractiveSwipeTarget(target: EventTarget | null) {
     ),
   );
 }
-
 export function GradesPanel({
   profile,
   program,
@@ -160,9 +158,9 @@ export function GradesPanel({
   const [manualCourseIds, setManualCourseIds] = useState<string[]>([]);
   const [drafts, setDrafts] = useState<Record<string, AttemptDraft>>({});
   const [courseQuery, setCourseQuery] = useState("");
+  const [renderedActivePage, setRenderedActivePage] = useState<GradesPageKey>(activePage);
   const [previousGradesPage, setPreviousGradesPage] = useState<GradesPageKey | null>(null);
   const [transitionDirection, setTransitionDirection] = useState<GradesTransitionDirection>("forward");
-  const previousActivePageRef = useRef<GradesPageKey>(activePage);
   const swipeStartRef = useRef<SwipeStart | null>(null);
   const pageTransitionTimeoutRef = useRef<number | null>(null);
   const deferredQuery = useDeferredValue(courseQuery);
@@ -237,25 +235,20 @@ export function GradesPanel({
   }, []);
 
   useEffect(() => {
-    const previousPage = previousActivePageRef.current;
-
-    if (previousPage === activePage) {
+    if (activePage === renderedActivePage || pageTransitionTimeoutRef.current !== null) {
       return;
     }
 
-    setTransitionDirection(activePage === "history" ? "forward" : "backward");
-    setPreviousGradesPage(previousPage);
-    previousActivePageRef.current = activePage;
-
-    if (pageTransitionTimeoutRef.current !== null) {
-      window.clearTimeout(pageTransitionTimeoutRef.current);
-    }
+    const nextDirection = activePage === "history" ? "forward" : "backward";
+    setTransitionDirection(nextDirection);
+    setPreviousGradesPage(renderedActivePage);
+    setRenderedActivePage(activePage);
 
     pageTransitionTimeoutRef.current = window.setTimeout(() => {
       setPreviousGradesPage(null);
       pageTransitionTimeoutRef.current = null;
     }, GRADES_PAGE_ANIMATION_MS);
-  }, [activePage]);
+  }, [activePage, renderedActivePage]);
 
   function resetTermDrafts() {
     setHiddenCourseIds([]);
@@ -378,9 +371,22 @@ export function GradesPanel({
   }
 
   function changeGradesPage(nextPage: GradesPageKey) {
-    if (activePage === nextPage) {
+    if (renderedActivePage === nextPage) {
       return;
     }
+
+    if (pageTransitionTimeoutRef.current !== null) {
+      return;
+    }
+
+    setTransitionDirection(nextPage === "history" ? "forward" : "backward");
+    setPreviousGradesPage(renderedActivePage);
+    setRenderedActivePage(nextPage);
+
+    pageTransitionTimeoutRef.current = window.setTimeout(() => {
+      setPreviousGradesPage(null);
+      pageTransitionTimeoutRef.current = null;
+    }, GRADES_PAGE_ANIMATION_MS);
 
     onPageChange(nextPage);
   }
@@ -440,16 +446,16 @@ export function GradesPanel({
   }
 
   const entryPage = (
-    <PanelCard className="space-y-6">
+    <PanelCard className="space-y-4 sm:space-y-6">
         <div className="flex items-start gap-3">
           <IconBadge tone="brand">
             <Save className="h-5 w-5" />
           </IconBadge>
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted)] sm:text-sm sm:tracking-[0.2em]">
               Nhập theo học kỳ
             </p>
-            <h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl text-[var(--foreground)]">
+            <h2 className="mt-2 font-[family-name:var(--font-display)] text-2xl text-[var(--foreground)] sm:mt-3 sm:text-3xl">
               Chọn kỳ, điền điểm, giữ lại cả hành trình.
             </h2>
             <p className="mt-3 text-sm leading-7 text-[var(--muted)]">
@@ -458,7 +464,7 @@ export function GradesPanel({
           </div>
         </div>
 
-        <div className="grid gap-4 xl:grid-cols-[0.45fr_0.55fr_1.2fr]">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-[0.45fr_0.55fr_1.2fr]">
           <label className="block">
             <span className="mb-2 block text-sm font-medium text-[var(--foreground)]">Học kỳ</span>
             <select
@@ -467,7 +473,7 @@ export function GradesPanel({
                 setSelectedSemester(Number(event.target.value));
                 resetTermDrafts();
               }}
-              className="w-full rounded-2xl border border-[var(--line)] bg-white/85 px-4 py-3 outline-none transition focus:border-[var(--brand-primary)] focus:ring-4 focus:ring-[var(--focus-ring)]"
+              className="w-full rounded-xl border border-[var(--line)] bg-white/85 px-3 py-2.5 outline-none transition focus:border-[var(--brand-primary)] focus:ring-4 focus:ring-[var(--focus-ring)] sm:rounded-2xl sm:px-4 sm:py-3"
             >
               {[1, 2, 3].map((semester) => (
                 <option key={semester} value={semester}>
@@ -485,7 +491,7 @@ export function GradesPanel({
                 setSelectedAcademicYearStart(Number(event.target.value));
                 resetTermDrafts();
               }}
-              className="w-full rounded-2xl border border-[var(--line)] bg-white/85 px-4 py-3 outline-none transition focus:border-[var(--brand-primary)] focus:ring-4 focus:ring-[var(--focus-ring)]"
+              className="w-full rounded-xl border border-[var(--line)] bg-white/85 px-3 py-2.5 outline-none transition focus:border-[var(--brand-primary)] focus:ring-4 focus:ring-[var(--focus-ring)] sm:rounded-2xl sm:px-4 sm:py-3"
             >
               {academicYearOptions.map((year) => (
                 <option key={year} value={year}>
@@ -495,7 +501,7 @@ export function GradesPanel({
             </select>
           </label>
 
-          <div className="relative">
+          <div className="relative col-span-2 xl:col-span-1">
             <label className="block">
               <span className="mb-2 block text-sm font-medium text-[var(--foreground)]">
                 Thêm học phần vào kỳ này
@@ -505,7 +511,7 @@ export function GradesPanel({
                 <input
                   value={courseQuery}
                   onChange={(event) => setCourseQuery(event.target.value)}
-                  className="w-full rounded-2xl border border-[var(--line)] bg-white/85 py-3 pl-11 pr-4 outline-none transition focus:border-[var(--brand-primary)] focus:ring-4 focus:ring-[var(--focus-ring)]"
+                  className="w-full rounded-xl border border-[var(--line)] bg-white/85 py-2.5 pl-10 pr-3 outline-none transition focus:border-[var(--brand-primary)] focus:ring-4 focus:ring-[var(--focus-ring)] sm:rounded-2xl sm:py-3 sm:pl-11 sm:pr-4"
                   placeholder="Gõ mã môn hoặc tên môn, ví dụ: cơ sở dữ liệu"
                 />
               </span>
@@ -533,7 +539,7 @@ export function GradesPanel({
           </div>
         </div>
 
-        <p className="rounded-2xl bg-[var(--surface-tint)] px-4 py-3 text-sm font-semibold text-[var(--brand-primary)]">
+        <p className="rounded-xl bg-[var(--surface-tint)] px-3 py-2.5 text-sm font-semibold text-[var(--brand-primary)] sm:rounded-2xl sm:px-4 sm:py-3">
           Đang nhập cho {selectedTermLabel}
         </p>
 
@@ -566,18 +572,18 @@ export function GradesPanel({
                 return (
                   <article
                     key={course.id}
-                    className="motion-card rounded-[1.5rem] border border-[var(--line)] bg-white/82 px-4 py-4"
+                    className="motion-card rounded-[1rem] border border-[var(--line)] bg-white/82 px-2.5 py-2.5 text-[0.78rem] sm:rounded-[1.5rem] sm:px-4 sm:py-4 sm:text-sm"
                   >
-                    <div className="grid gap-4 xl:grid-cols-[minmax(15rem,1.25fr)_9.5rem_9rem_minmax(11rem,0.9fr)_18.5rem] xl:items-start xl:gap-3">
-                      <div className="min-w-0">
+                    <div className="grid grid-cols-2 gap-3 xl:grid-cols-[minmax(15rem,1.25fr)_9.5rem_9rem_minmax(11rem,0.9fr)_18.5rem] xl:items-start xl:gap-3">
+                      <div className="col-span-2 min-w-0 xl:col-span-1">
                         <p className="text-xs font-semibold text-[var(--muted)]">{course.code}</p>
                         <h3
                           title={courseLabel}
-                          className="mt-1 truncate font-semibold leading-6 text-[var(--foreground)]"
+                          className="mt-1 truncate font-semibold leading-5 text-[var(--foreground)] sm:leading-6"
                         >
                           {course.title}
                         </h3>
-                        <div className="mt-3 flex min-w-0 flex-wrap gap-2">
+                        <div className="mt-2 flex min-w-0 flex-wrap gap-1.5 sm:mt-3 sm:gap-2">
                           <StatusPill label={`${course.credits} tín chỉ`} tone="neutral" />
                           <StatusPill
                             label={course.countsTowardGpa ? "Tính GPA" : "Không tính GPA"}
@@ -592,7 +598,7 @@ export function GradesPanel({
                       </div>
 
                       <label className="min-w-0 space-y-1">
-                        <span className="block text-xs font-semibold uppercase tracking-[0.12em] text-[var(--muted)] xl:hidden">
+                          <span className="block text-[0.62rem] font-semibold uppercase tracking-[0.12em] text-[var(--muted)] sm:text-xs xl:hidden">
                           Hình thức
                         </span>
                         {usePassFail ? (
@@ -601,20 +607,20 @@ export function GradesPanel({
                             onChange={(event) =>
                               updateDraft(course.id, { gradeInputMode: event.target.value as GradeInputMode })
                             }
-                            className="w-full rounded-2xl border border-[var(--line)] bg-white px-4 py-3 outline-none transition focus:border-[var(--brand-primary)] focus:ring-4 focus:ring-[var(--focus-ring)]"
+                            className="w-full min-h-10 rounded-xl border border-[var(--line)] bg-white px-2.5 py-2 text-sm outline-none transition focus:border-[var(--brand-primary)] focus:ring-4 focus:ring-[var(--focus-ring)] sm:rounded-2xl sm:px-4 sm:py-3"
                           >
                             <option value="numeric">Nhập điểm</option>
                             <option value="pass_fail">Đạt/Không đạt</option>
                           </select>
                         ) : (
-                          <span className="block rounded-2xl border border-[var(--line)] bg-white px-4 py-3 text-sm font-semibold text-[var(--muted)]">
+                          <span className="block min-h-10 rounded-xl border border-[var(--line)] bg-white px-2.5 py-2 text-sm font-semibold text-[var(--muted)] sm:rounded-2xl sm:px-4 sm:py-3">
                             Nhập điểm
                           </span>
                         )}
                       </label>
 
                       <label className="min-w-0 space-y-1">
-                        <span className="block text-xs font-semibold uppercase tracking-[0.12em] text-[var(--muted)] xl:hidden">
+                          <span className="block text-[0.62rem] font-semibold uppercase tracking-[0.12em] text-[var(--muted)] sm:text-xs xl:hidden">
                           Kết quả
                         </span>
                         {gradeInputMode === "pass_fail" ? (
@@ -623,7 +629,7 @@ export function GradesPanel({
                             onChange={(event) =>
                               updateDraft(course.id, { passFailStatus: event.target.value as "passed" | "failed" })
                             }
-                            className="w-full rounded-2xl border border-[var(--line)] bg-white px-4 py-3 outline-none transition focus:border-[var(--brand-primary)] focus:ring-4 focus:ring-[var(--focus-ring)]"
+                            className="w-full min-h-10 rounded-xl border border-[var(--line)] bg-white px-2.5 py-2 text-sm outline-none transition focus:border-[var(--brand-primary)] focus:ring-4 focus:ring-[var(--focus-ring)] sm:rounded-2xl sm:px-4 sm:py-3"
                           >
                             <option value="passed">Đạt</option>
                             <option value="failed">Không đạt</option>
@@ -636,48 +642,48 @@ export function GradesPanel({
                             step={0.001}
                             value={draft.score10}
                             onChange={(event) => updateDraft(course.id, { score10: event.target.value })}
-                            className="w-full rounded-2xl border border-[var(--line)] bg-white px-4 py-3 outline-none transition focus:border-[var(--brand-primary)] focus:ring-4 focus:ring-[var(--focus-ring)]"
+                            className="w-full min-h-10 rounded-xl border border-[var(--line)] bg-white px-2.5 py-2 text-sm outline-none transition focus:border-[var(--brand-primary)] focus:ring-4 focus:ring-[var(--focus-ring)] sm:rounded-2xl sm:px-4 sm:py-3"
                             placeholder="8.500"
                           />
                         )}
                       </label>
 
-                      <label className="min-w-0 space-y-1">
-                        <span className="block text-xs font-semibold uppercase tracking-[0.12em] text-[var(--muted)] xl:hidden">
+                      <label className="col-span-2 min-w-0 space-y-1 xl:col-span-1">
+                          <span className="block text-[0.62rem] font-semibold uppercase tracking-[0.12em] text-[var(--muted)] sm:text-xs xl:hidden">
                           Ghi chú
                         </span>
                         <input
                           value={draft.notes}
                           onChange={(event) => updateDraft(course.id, { notes: event.target.value })}
                           title={draft.notes}
-                          className="w-full rounded-2xl border border-[var(--line)] bg-white px-4 py-3 outline-none transition focus:border-[var(--brand-primary)] focus:ring-4 focus:ring-[var(--focus-ring)]"
+                          className="w-full min-h-10 rounded-xl border border-[var(--line)] bg-white px-2.5 py-2 text-sm outline-none transition focus:border-[var(--brand-primary)] focus:ring-4 focus:ring-[var(--focus-ring)] sm:rounded-2xl sm:px-4 sm:py-3"
                           placeholder="Ghi chú nếu cần"
                         />
                       </label>
 
-                      <div className="grid min-w-0 grid-cols-2 gap-2 xl:w-[18.5rem]">
+                      <div className="col-span-2 grid min-w-0 grid-cols-2 gap-2 xl:col-span-1 xl:w-[18.5rem]">
                         <button
                           type="button"
                           onClick={() => handleSaveCourse(course)}
                           disabled={isSaving || !canSave}
-                          className="inline-flex min-h-[max(3rem,44px)] w-full min-w-0 items-center justify-center gap-2 whitespace-nowrap rounded-full bg-[var(--brand-primary)] px-4 py-3 text-sm font-semibold text-white shadow-[0_14px_34px_rgba(0,63,136,0.2)] transition hover:bg-[var(--brand-primary-strong)] disabled:opacity-60"
+                          className="inline-flex min-h-9 w-full min-w-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-[var(--brand-primary)] px-2.5 py-1.5 text-xs font-semibold text-white shadow-[0_14px_34px_rgba(0,63,136,0.2)] transition hover:bg-[var(--brand-primary-strong)] disabled:opacity-60 sm:min-h-[max(3rem,44px)] sm:gap-2 sm:px-4 sm:py-3 sm:text-sm"
                         >
                           <span className="truncate">{savedAttempt ? "Cập nhật" : "Lưu"}</span>
-                          <Check className="h-4 w-4 shrink-0" />
+                          <Check className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
                         </button>
                         <button
                           type="button"
                           onClick={() => removeCourse(course)}
-                          className="inline-flex min-h-[max(3rem,44px)] w-full min-w-0 items-center justify-center gap-2 whitespace-nowrap rounded-full border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700 transition hover:bg-rose-100"
+                          className="inline-flex min-h-9 w-full min-w-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-rose-200 bg-rose-50 px-2.5 py-1.5 text-xs font-semibold text-rose-700 transition hover:bg-rose-100 sm:min-h-[max(3rem,44px)] sm:gap-2 sm:px-4 sm:py-3 sm:text-sm"
                           aria-label="Xóa khỏi học kỳ"
                         >
-                          <Trash2 className="h-4 w-4 shrink-0" />
+                          <Trash2 className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
                           <span className="truncate">Xóa</span>
                         </button>
                       </div>
                     </div>
 
-                    <div className="mt-3 flex min-w-0 flex-wrap gap-2 text-sm text-[var(--muted)]">
+                    <div className="mt-2 flex min-w-0 flex-wrap gap-1.5 text-xs text-[var(--muted)] sm:mt-3 sm:gap-2 sm:text-sm">
                       {gradeInputMode === "pass_fail" ? (
                         <span>Hình thức: {recordStatusLabels[draft.passFailStatus]}</span>
                       ) : (
@@ -716,10 +722,10 @@ export function GradesPanel({
             <History className="h-5 w-5" />
           </IconBadge>
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted)] sm:text-sm sm:tracking-[0.2em]">
               Lịch sử theo học kỳ
             </p>
-            <h3 className="mt-3 text-2xl font-semibold text-[var(--foreground)]">
+            <h3 className="mt-2 text-xl font-semibold text-[var(--foreground)] sm:mt-3 sm:text-2xl">
               {attempts.length ? `${attempts.length} lần học đã ghi nhận` : "Chưa có điểm nào"}
             </h3>
           </div>
@@ -728,7 +734,7 @@ export function GradesPanel({
         <div className="max-h-[48.75rem] space-y-3 overflow-y-auto pr-1 scrollbar-subtle">
           {attempts.length ? (
             groupAttemptsByTerm(attempts).map(([termLabel, termAttempts]) => (
-              <section key={termLabel} className="rounded-[1.5rem] border border-[var(--line)] bg-white/76 p-4">
+              <section key={termLabel} className="rounded-[1rem] border border-[var(--line)] bg-white/76 p-2.5 sm:rounded-[1.5rem] sm:p-4">
                 <div className="flex items-center justify-between gap-3">
                   <h4 className="font-semibold text-[var(--foreground)]">{termLabel}</h4>
                   <StatusPill label={`${termAttempts.length} lần học`} tone="neutral" />
@@ -752,26 +758,26 @@ export function GradesPanel({
                       return (
                         <article
                           key={attempt.id}
-                          className="grid gap-3 rounded-2xl border border-[var(--line)] bg-white px-3 py-3 xl:grid-cols-[minmax(13rem,1.4fr)_10rem_minmax(8rem,0.8fr)_18rem_11rem] xl:items-center xl:gap-3"
+                          className="grid grid-cols-2 gap-2 rounded-xl border border-[var(--line)] bg-white px-2.5 py-2.5 text-[0.78rem] sm:px-3 sm:py-3 sm:text-sm xl:grid-cols-[minmax(13rem,1.4fr)_10rem_minmax(8rem,0.8fr)_18rem_11rem] xl:items-center xl:gap-3 xl:rounded-2xl"
                         >
-                          <div className="min-w-0">
+                          <div className="col-span-2 min-w-0 xl:col-span-1">
                             <p title={courseLabel} className="truncate font-semibold text-[var(--foreground)]">
                               {courseLabel}
                             </p>
-                            <p className="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)] xl:hidden">
+                            <p className="mt-1 text-[0.62rem] font-semibold uppercase tracking-[0.14em] text-[var(--muted)] sm:text-xs xl:hidden">
                               Học phần
                             </p>
                           </div>
-                          <p title={scoreLabel} className="min-w-0 truncate text-sm text-[var(--muted)]">
+                          <p title={scoreLabel} className="min-w-0 truncate text-xs text-[var(--muted)] sm:text-sm">
                             {scoreLabel}
                           </p>
                           <p
                             title={notesLabel}
-                            className="min-w-0 truncate text-sm text-[var(--muted)]"
+                            className="min-w-0 truncate text-xs text-[var(--muted)] sm:text-sm"
                           >
                             {notesLabel}
                           </p>
-                          <div className="flex min-w-0 flex-wrap gap-2">
+                          <div className="col-span-2 flex min-w-0 flex-wrap gap-1.5 sm:gap-2 xl:col-span-1">
                             {course ? (
                               <StatusPill
                                 label={course.countsTowardGpa ? "Tính GPA" : "Không tính GPA"}
@@ -785,7 +791,7 @@ export function GradesPanel({
                             <StatusPill label={recordStatusLabels[attempt.status]} tone={statusTone(attempt.status)} />
                             {attempt.isEffective ? <StatusPill label="Hiện hành" tone="success" /> : null}
                           </div>
-                          <div className="grid grid-cols-2 gap-2 xl:w-44">
+                          <div className="col-span-2 grid grid-cols-2 gap-2 xl:col-span-1 xl:w-44">
                             <button
                               type="button"
                               onClick={() => {
@@ -803,17 +809,17 @@ export function GradesPanel({
                                 }));
                                 changeGradesPage("entry");
                               }}
-                              className="inline-flex min-h-10 w-full items-center justify-center gap-2 whitespace-nowrap rounded-full border border-[var(--line)] bg-white px-3 py-2 text-xs font-semibold text-[var(--brand-primary)] transition hover:bg-[var(--surface-tint)]"
+                              className="inline-flex min-h-9 w-full items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-[var(--line)] bg-white px-2 py-1.5 text-[0.68rem] font-semibold text-[var(--brand-primary)] transition hover:bg-[var(--surface-tint)] sm:min-h-10 sm:gap-2 sm:px-3 sm:py-2 sm:text-xs"
                             >
-                              <Pencil className="h-3.5 w-3.5" />
+                              <Pencil className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                               Sửa
                             </button>
                             <button
                               type="button"
                               onClick={() => onDeleteAttempt(attempt.id)}
-                              className="inline-flex min-h-10 w-full items-center justify-center gap-2 whitespace-nowrap rounded-full border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-semibold text-rose-700 transition hover:bg-rose-100"
+                              className="inline-flex min-h-9 w-full items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-rose-200 bg-rose-50 px-2 py-1.5 text-[0.68rem] font-semibold text-rose-700 transition hover:bg-rose-100 sm:min-h-10 sm:gap-2 sm:px-3 sm:py-2 sm:text-xs"
                             >
-                              <Trash2 className="h-3.5 w-3.5" />
+                              <Trash2 className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                               Xóa
                             </button>
                           </div>
@@ -841,12 +847,12 @@ export function GradesPanel({
 
   const entrySummary = `${selectedTermLabel} - ${visibleCourses.length} môn đang hiển thị`;
   const historySummary = attempts.length ? `${attempts.length} lần học đã ghi nhận` : "Chưa có điểm nào";
-  const activePageContent = activePage === "entry" ? entryPage : historyPage;
+  const activePageContent = renderedActivePage === "entry" ? entryPage : historyPage;
   const previousPageContent =
     previousGradesPage === "entry" ? entryPage : previousGradesPage === "history" ? historyPage : null;
 
   function renderPagePreview(page: GradesPageKey) {
-    const isActive = activePage === page;
+    const isActive = renderedActivePage === page;
     const isEntry = page === "entry";
     const title = isEntry ? "Nhập theo học kỳ" : "Lịch sử theo học kỳ";
     const summary = isEntry ? entrySummary : historySummary;
@@ -861,7 +867,7 @@ export function GradesPanel({
         type="button"
         onClick={() => changeGradesPage(page)}
         aria-pressed={isActive}
-        className={`grades-page-preview group min-h-24 rounded-[1.75rem] border px-4 py-4 text-left shadow-[0_12px_32px_rgba(0,25,54,0.06)] outline-none transition-[transform,background-color,border-color,box-shadow,opacity] duration-200 focus-visible:ring-4 focus-visible:ring-[var(--focus-ring)] ${
+        className={`grades-page-preview group min-h-[5.25rem] rounded-[1.25rem] border px-3 py-3 text-left shadow-[0_12px_32px_rgba(0,25,54,0.06)] outline-none transition-[transform,background-color,border-color,box-shadow,opacity] duration-200 focus-visible:ring-4 focus-visible:ring-[var(--focus-ring)] sm:min-h-24 sm:rounded-[1.75rem] sm:px-4 sm:py-4 ${
           isActive
             ? "border-[var(--brand-primary)] bg-[var(--surface)] opacity-100"
             : "border-[var(--line)] bg-white/62 opacity-[0.78] hover:-translate-y-0.5 hover:border-[var(--line-strong)] hover:bg-white"
@@ -869,7 +875,7 @@ export function GradesPanel({
       >
         <span className="flex items-start gap-3">
           <span
-            className={`inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ring-1 transition ${
+            className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ring-1 transition sm:h-11 sm:w-11 sm:rounded-2xl ${
               isActive
                 ? "bg-[var(--brand-primary)] text-white ring-[var(--brand-primary)]"
                 : "bg-[var(--surface-tint)] text-[var(--brand-primary)] ring-blue-100"
@@ -878,15 +884,15 @@ export function GradesPanel({
             <Icon className="h-5 w-5" />
           </span>
           <span className="min-w-0">
-            <span className="block text-sm font-semibold uppercase tracking-[0.18em] text-[var(--muted)]">
+            <span className="hidden text-sm font-semibold uppercase tracking-[0.18em] text-[var(--muted)] sm:block">
               {isActive ? "Đang mở" : "Trang kế bên"}
             </span>
-            <span className="mt-1 block truncate text-lg font-semibold text-[var(--foreground)]">
+            <span className="block truncate text-base font-semibold text-[var(--foreground)] sm:mt-1 sm:text-lg">
               {title}
             </span>
             <span className="mt-1 block truncate text-sm text-[var(--muted)]">{summary}</span>
             <span
-              className={`mt-3 block text-sm leading-6 text-[var(--muted)] transition ${
+              className={`mt-3 hidden text-sm leading-6 text-[var(--muted)] transition sm:block ${
                 isActive ? "opacity-100" : "truncate opacity-[0.72]"
               }`}
             >
@@ -909,14 +915,14 @@ export function GradesPanel({
       onPointerUp={handlePagerPointerUp}
       onPointerCancel={handlePagerPointerCancel}
     >
-      <div className="grid gap-3 lg:grid-cols-2">
+      <div className="grid grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-2">
         {renderPagePreview("entry")}
         {renderPagePreview("history")}
       </div>
 
       <div
         className="grades-pager-stage"
-        data-active-page={activePage}
+        data-active-page={renderedActivePage}
         aria-live="polite"
       >
         {previousPageContent ? (
@@ -930,7 +936,7 @@ export function GradesPanel({
         ) : null}
 
         <div
-          key={`active-${activePage}`}
+          key={`active-${renderedActivePage}`}
           className={`grades-pager-page grades-pager-page-active grades-pager-page-enter-${transitionDirection}`}
         >
           {activePageContent}

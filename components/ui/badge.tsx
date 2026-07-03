@@ -26,7 +26,7 @@ export function Badge({
     <span
       title={textTitle}
       className={clsx(
-        "inline-flex max-w-[6.5rem] items-center justify-center overflow-hidden rounded-full px-3 py-1 text-xs font-semibold leading-5 ring-1",
+        "inline-flex max-w-[5.2rem] items-center justify-center overflow-hidden rounded-full px-2 py-0.5 text-[0.68rem] font-semibold leading-4 ring-1 sm:max-w-[6.5rem] sm:px-3 sm:py-1 sm:text-xs sm:leading-5",
         toneClassName[tone],
         className,
       )}

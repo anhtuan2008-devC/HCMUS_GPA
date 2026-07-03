@@ -130,9 +130,9 @@ export function GpaCalculationPanel({
   }
 
   return (
-    <div className="motion-page space-y-5">
+    <div className="motion-page space-y-3 sm:space-y-5">
       <PanelCard className="overflow-hidden p-0">
-        <div className="metric-card relative overflow-hidden px-6 py-6 text-white">
+        <div className="metric-card relative overflow-hidden px-4 py-4 text-white sm:px-6 sm:py-6">
           <div className="absolute -right-12 -top-16 h-48 w-48 rounded-full bg-white/10 blur-2xl" />
           <div className="absolute bottom-4 right-8 hidden h-28 w-28 rotate-12 rounded-[2rem] border border-white/10 bg-white/10 lg:block" />
           <button
@@ -144,12 +144,12 @@ export function GpaCalculationPanel({
             Quay lại Tổng quan
           </button>
 
-          <div className="relative mt-6 grid gap-6 xl:grid-cols-[1fr_28rem] xl:items-end">
+          <div className="relative mt-5 grid gap-4 sm:mt-6 sm:gap-6 xl:grid-cols-[1fr_28rem] xl:items-end">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-white/72">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/72 sm:text-sm sm:tracking-[0.22em]">
                 GPA Lab
               </p>
-              <h2 className="mt-3 font-[family-name:var(--font-display)] text-4xl font-bold">
+              <h2 className="mt-2 font-[family-name:var(--font-display)] text-2xl font-bold sm:mt-3 sm:text-4xl">
                 Thử cách tính, hiểu từng tín chỉ.
               </h2>
               <p className="mt-3 max-w-3xl text-sm leading-7 text-white/78">
@@ -158,19 +158,19 @@ export function GpaCalculationPanel({
               </p>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div className="rounded-[1.5rem] border border-white/14 bg-white/12 p-5">
+            <div className="grid grid-cols-2 gap-2 sm:gap-3">
+              <div className="rounded-[1.15rem] border border-white/14 bg-white/12 p-3 sm:rounded-[1.5rem] sm:p-5">
                 <p className="text-sm text-white/70">GPA mô phỏng hệ 10</p>
-                <p className="mt-2 text-4xl font-bold">
+                <p className="mt-2 text-2xl font-bold sm:text-4xl">
                   <AnimatedNumber value={simulatedBreakdown.simulatedGpa10} decimals={3} />
                 </p>
                 <p className="mt-1 text-sm text-white/75">
                   Chính thức: {formatNumber(officialBreakdown.officialGpa10)}
                 </p>
               </div>
-              <div className="rounded-[1.5rem] border border-white/14 bg-white/12 p-5">
+              <div className="rounded-[1.15rem] border border-white/14 bg-white/12 p-3 sm:rounded-[1.5rem] sm:p-5">
                 <p className="text-sm text-white/70">GPA mô phỏng hệ 4</p>
-                <p className="mt-2 text-4xl font-bold">
+                <p className="mt-2 text-2xl font-bold sm:text-4xl">
                   <AnimatedNumber value={simulatedBreakdown.simulatedGpa4} decimals={2} />
                 </p>
                 <p className="mt-1 text-sm text-white/75">
@@ -182,7 +182,7 @@ export function GpaCalculationPanel({
         </div>
       </PanelCard>
 
-      <div className="grid gap-5 xl:grid-cols-[0.85fr_1.15fr]">
+      <div className="grid gap-3 sm:gap-5 xl:grid-cols-[0.85fr_1.15fr]">
         <PanelCard className="motion-card space-y-4" style={{ "--delay": "70ms" } as React.CSSProperties}>
           <div className="flex items-start gap-3">
             <IconBadge tone="brand">
@@ -212,8 +212,8 @@ export function GpaCalculationPanel({
             </select>
           </label>
 
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div className="rounded-[1.5rem] bg-[var(--surface-tint)] px-4 py-4">
+          <div className="grid grid-cols-2 gap-2 sm:gap-3">
+            <div className="rounded-[1.15rem] bg-[var(--surface-tint)] px-3 py-3 sm:rounded-[1.5rem] sm:px-4 sm:py-4">
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">
                 {isTermScoped ? "GPA kỳ" : "CPA hiện tại"}
               </p>
@@ -224,7 +224,7 @@ export function GpaCalculationPanel({
                 />
               </p>
             </div>
-            <div className="rounded-[1.5rem] bg-[var(--surface-tint)] px-4 py-4">
+            <div className="rounded-[1.15rem] bg-[var(--surface-tint)] px-3 py-3 sm:rounded-[1.5rem] sm:px-4 sm:py-4">
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">
                 CPA đến kỳ
               </p>
@@ -271,8 +271,8 @@ export function GpaCalculationPanel({
             </div>
           </div>
 
-          <div className="overflow-hidden rounded-[1.5rem] border border-[var(--line)] bg-white/78">
-            <div className="grid grid-cols-[1fr_13rem] bg-[var(--surface-tint)] px-4 py-3 text-sm font-semibold text-[var(--foreground)]">
+          <div className="overflow-hidden rounded-[1.15rem] border border-[var(--line)] bg-white/78 sm:rounded-[1.5rem]">
+            <div className="grid grid-cols-[minmax(0,1fr)_minmax(7.5rem,0.75fr)] bg-[var(--surface-tint)] px-3 py-2.5 text-sm font-semibold text-[var(--foreground)] sm:grid-cols-[1fr_13rem] sm:px-4 sm:py-3">
               <span>Tên mục</span>
               <span className="text-right">Giá trị</span>
             </div>
@@ -280,7 +280,7 @@ export function GpaCalculationPanel({
               {summaryRows.map(([label, value]) => (
                 <div
                   key={label}
-                  className="grid grid-cols-[1fr_13rem] gap-3 px-4 py-3 text-sm"
+                  className="grid grid-cols-[minmax(0,1fr)_minmax(7.5rem,0.75fr)] gap-2 px-3 py-2.5 text-sm sm:grid-cols-[1fr_13rem] sm:gap-3 sm:px-4 sm:py-3"
                 >
                   <span className="text-[var(--foreground)]">{label}</span>
                   <span className="text-right font-semibold tabular-nums text-[var(--foreground)]">
@@ -316,9 +316,9 @@ export function GpaCalculationPanel({
           </label>
         </div>
 
-        <div className="overflow-x-auto rounded-[1.5rem] border border-[var(--line)] bg-white/76">
-          <div className="min-w-[70rem]">
-            <div className="grid grid-cols-[8rem_8.5rem_minmax(18rem,1fr)_5rem_6.5rem_6.5rem_8rem_minmax(13rem,0.8fr)] gap-3 border-b border-[var(--line)] bg-[var(--surface-tint)] px-4 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
+        <div className="overflow-x-auto rounded-[1.15rem] border border-[var(--line)] bg-white/76 sm:rounded-[1.5rem]">
+          <div className="min-w-[62rem] sm:min-w-[70rem]">
+            <div className="grid grid-cols-[7rem_7.5rem_minmax(16rem,1fr)_4.25rem_5.75rem_5.75rem_7rem_minmax(11rem,0.8fr)] gap-2 border-b border-[var(--line)] bg-[var(--surface-tint)] px-3 py-2.5 text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-[var(--muted)] sm:grid-cols-[8rem_8.5rem_minmax(18rem,1fr)_5rem_6.5rem_6.5rem_8rem_minmax(13rem,0.8fr)] sm:gap-3 sm:px-4 sm:py-3 sm:text-xs sm:tracking-[0.14em]">
               <span>Mô phỏng</span>
               <span>NH/HK</span>
               <span>Học phần</span>
@@ -338,7 +338,7 @@ export function GpaCalculationPanel({
                   return (
                     <article
                       key={`${row.courseId}-${row.termLabel}`}
-                      className={`grid grid-cols-[8rem_8.5rem_minmax(18rem,1fr)_5rem_6.5rem_6.5rem_8rem_minmax(13rem,0.8fr)] items-center gap-3 px-4 py-3 text-sm transition duration-300 ${
+                      className={`grid grid-cols-[7rem_7.5rem_minmax(16rem,1fr)_4.25rem_5.75rem_5.75rem_7rem_minmax(11rem,0.8fr)] items-center gap-2 px-3 py-2.5 text-[0.75rem] transition duration-300 sm:grid-cols-[8rem_8.5rem_minmax(18rem,1fr)_5rem_6.5rem_6.5rem_8rem_minmax(13rem,0.8fr)] sm:gap-3 sm:px-4 sm:py-3 sm:text-sm ${
                         checked ? "text-[var(--foreground)]" : "bg-slate-50/60 text-[var(--muted)]"
                       } ${row.isSimulationOverride ? "ring-1 ring-inset ring-blue-100" : ""}`}
                     >
@@ -406,7 +406,7 @@ export function GpaCalculationPanel({
           </div>
         </div>
 
-        <div className="rounded-[1.5rem] bg-[var(--surface-tint)] px-4 py-3 text-sm leading-6 text-[var(--brand-primary)]">
+        <div className="rounded-[1.15rem] bg-[var(--surface-tint)] px-3 py-2.5 text-xs leading-5 text-[var(--brand-primary)] sm:rounded-[1.5rem] sm:px-4 sm:py-3 sm:text-sm sm:leading-6">
           Mô phỏng chỉ thay đổi số liệu trong trang này. Dữ liệu thật, GPA trên Tổng quan và
           lịch sử điểm của bạn không bị ghi đè.
         </div>
