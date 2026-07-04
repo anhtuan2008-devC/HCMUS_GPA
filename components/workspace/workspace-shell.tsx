@@ -356,6 +356,23 @@ export function WorkspaceShell({
         ...snapshot.attempts.map((attempt) => attempt.termLabel),
       ].filter((value, index, values) => value && values.indexOf(value) === index)
     : [currentTermLabel];
+  const shellFocusSignals = [
+    {
+      label: "GPA",
+      value: summary.gpa10.toFixed(3),
+      helper: "hệ 10",
+    },
+    {
+      label: "Tín chỉ",
+      value: `${progress.earnedCredits}/${progress.totalCredits}`,
+      helper: "đã tích lũy",
+    },
+    {
+      label: "Cảnh báo",
+      value: notifications.length.toString(),
+      helper: "việc nên xem",
+    },
+  ];
 
   const clearMobileNavTimeout = useCallback(() => {
     if (mobileNavTimeoutRef.current !== null) {
@@ -1056,6 +1073,23 @@ export function WorkspaceShell({
                 </span>
               </button>
             </div>
+            {snapshot.profile && currentProgram ? (
+              <div className="mt-2 grid grid-cols-3 gap-1.5">
+                {shellFocusSignals.map((signal) => (
+                  <div
+                    key={signal.label}
+                    className="rounded-xl border border-[var(--line)] bg-white/72 px-2 py-1.5 text-center"
+                  >
+                    <p className="truncate text-[0.58rem] font-semibold uppercase tracking-[0.08em] text-[var(--muted)]">
+                      {signal.label}
+                    </p>
+                    <p className="truncate text-[0.72rem] font-bold tabular-nums text-[var(--foreground)]">
+                      {signal.value}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            ) : null}
           </div>
 
           {isMobileNavRendered ? (
@@ -1076,6 +1110,24 @@ export function WorkspaceShell({
                   {navigationLabels[activeView]}
                 </h2>
                 <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{viewDescriptions[activeView]}</p>
+                <div className="mt-3 grid w-[32rem] max-w-full grid-cols-3 gap-2 xl:w-[34rem]">
+                  {shellFocusSignals.map((signal) => (
+                    <div
+                      key={signal.label}
+                      className="flex h-[5.35rem] min-w-0 flex-col justify-between rounded-2xl border border-[var(--line)] bg-white/68 px-3 py-2 shadow-sm"
+                    >
+                      <p className="truncate text-[0.62rem] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
+                        {signal.label}
+                      </p>
+                      <p className="truncate text-base font-bold tabular-nums text-[var(--foreground)]">
+                        {signal.value}
+                      </p>
+                      <p className="truncate text-xs text-[var(--muted)]" title={signal.helper}>
+                        {signal.helper}
+                      </p>
+                    </div>
+                  ))}
+                </div>
               </div>
               <div className="flex flex-wrap items-center gap-3">
                 <div className="relative">
@@ -1255,8 +1307,10 @@ export function WorkspaceShell({
                     : "text-[var(--muted)] hover:bg-[var(--surface-tint)] hover:text-[var(--brand-primary)]"
                 }`}
                 aria-label={navigationLabels[item.key]}
+                aria-current={isActive ? "page" : undefined}
               >
                 <span className="mobile-bottom-nav-pill" aria-hidden="true" />
+                <span className="mobile-bottom-nav-orbit" aria-hidden="true" />
                 <Icon className="relative z-10 h-5 w-5 transition-[transform,opacity] duration-200" />
               </button>
             );

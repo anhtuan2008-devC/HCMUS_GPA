@@ -1,6 +1,6 @@
 "use client";
 
-import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
+import { useDeferredValue, useMemo, useRef, useState } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent, PointerEvent as ReactPointerEvent } from "react";
 import { Check, History, Pencil, Plus, RotateCcw, Save, Search, Trash2 } from "lucide-react";
 import type {
@@ -48,15 +48,12 @@ type AttemptUpdateInput = Omit<AttemptInput, "courseId"> & {
   attemptId: string;
 };
 
-type GradesTransitionDirection = "forward" | "backward";
-
 type SwipeStart = {
   pointerId: number;
   x: number;
   y: number;
 };
 
-const GRADES_PAGE_ANIMATION_MS = 320;
 const GRADES_SWIPE_MIN_DISTANCE = 70;
 const GRADES_SWIPE_MAX_VERTICAL_DISTANCE = 45;
 
@@ -158,11 +155,7 @@ export function GradesPanel({
   const [manualCourseIds, setManualCourseIds] = useState<string[]>([]);
   const [drafts, setDrafts] = useState<Record<string, AttemptDraft>>({});
   const [courseQuery, setCourseQuery] = useState("");
-  const [renderedActivePage, setRenderedActivePage] = useState<GradesPageKey>(activePage);
-  const [previousGradesPage, setPreviousGradesPage] = useState<GradesPageKey | null>(null);
-  const [transitionDirection, setTransitionDirection] = useState<GradesTransitionDirection>("forward");
   const swipeStartRef = useRef<SwipeStart | null>(null);
-  const pageTransitionTimeoutRef = useRef<number | null>(null);
   const deferredQuery = useDeferredValue(courseQuery);
   const selectedTermLabel = formatTermLabel(selectedSemester, selectedAcademicYearStart);
   const courseMap = useMemo(() => new Map(program.courses.map((course) => [course.id, course])), [program.courses]);
@@ -225,30 +218,6 @@ export function GradesPanel({
         )
         .slice(0, 8)
     : [];
-
-  useEffect(() => {
-    return () => {
-      if (pageTransitionTimeoutRef.current !== null) {
-        window.clearTimeout(pageTransitionTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    if (activePage === renderedActivePage || pageTransitionTimeoutRef.current !== null) {
-      return;
-    }
-
-    const nextDirection = activePage === "history" ? "forward" : "backward";
-    setTransitionDirection(nextDirection);
-    setPreviousGradesPage(renderedActivePage);
-    setRenderedActivePage(activePage);
-
-    pageTransitionTimeoutRef.current = window.setTimeout(() => {
-      setPreviousGradesPage(null);
-      pageTransitionTimeoutRef.current = null;
-    }, GRADES_PAGE_ANIMATION_MS);
-  }, [activePage, renderedActivePage]);
 
   function resetTermDrafts() {
     setHiddenCourseIds([]);
@@ -371,22 +340,9 @@ export function GradesPanel({
   }
 
   function changeGradesPage(nextPage: GradesPageKey) {
-    if (renderedActivePage === nextPage) {
+    if (activePage === nextPage) {
       return;
     }
-
-    if (pageTransitionTimeoutRef.current !== null) {
-      return;
-    }
-
-    setTransitionDirection(nextPage === "history" ? "forward" : "backward");
-    setPreviousGradesPage(renderedActivePage);
-    setRenderedActivePage(nextPage);
-
-    pageTransitionTimeoutRef.current = window.setTimeout(() => {
-      setPreviousGradesPage(null);
-      pageTransitionTimeoutRef.current = null;
-    }, GRADES_PAGE_ANIMATION_MS);
 
     onPageChange(nextPage);
   }
@@ -847,12 +803,9 @@ export function GradesPanel({
 
   const entrySummary = `${selectedTermLabel} - ${visibleCourses.length} môn đang hiển thị`;
   const historySummary = attempts.length ? `${attempts.length} lần học đã ghi nhận` : "Chưa có điểm nào";
-  const activePageContent = renderedActivePage === "entry" ? entryPage : historyPage;
-  const previousPageContent =
-    previousGradesPage === "entry" ? entryPage : previousGradesPage === "history" ? historyPage : null;
 
   function renderPagePreview(page: GradesPageKey) {
-    const isActive = renderedActivePage === page;
+    const isActive = activePage === page;
     const isEntry = page === "entry";
     const title = isEntry ? "Nhập theo học kỳ" : "Lịch sử theo học kỳ";
     const summary = isEntry ? entrySummary : historySummary;
@@ -922,24 +875,16 @@ export function GradesPanel({
 
       <div
         className="grades-pager-stage"
-        data-active-page={renderedActivePage}
+        data-active-page={activePage}
         aria-live="polite"
       >
-        {previousPageContent ? (
-          <div
-            key={`previous-${previousGradesPage}-${transitionDirection}`}
-            className={`grades-pager-page grades-pager-page-previous grades-pager-page-exit-${transitionDirection}`}
-            aria-hidden="true"
-          >
-            {previousPageContent}
+        <div className="grades-pager-track">
+          <div className="grades-pager-slide" aria-hidden={activePage !== "entry"} inert={activePage !== "entry"}>
+            {entryPage}
           </div>
-        ) : null}
-
-        <div
-          key={`active-${renderedActivePage}`}
-          className={`grades-pager-page grades-pager-page-active grades-pager-page-enter-${transitionDirection}`}
-        >
-          {activePageContent}
+          <div className="grades-pager-slide" aria-hidden={activePage !== "history"} inert={activePage !== "history"}>
+            {historyPage}
+          </div>
         </div>
       </div>
 

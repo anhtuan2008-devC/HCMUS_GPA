@@ -14,6 +14,8 @@ const riskyPatterns = [
   [/Access-Control-Allow-Origin/i, "Không bật CORS thủ công nếu chưa có allowlist rõ ràng."],
   [/\beval\s*\(|new Function\s*\(/, "Không dùng dynamic code execution."],
   [/\binnerHTML\b|document\.write\s*\(/, "Không dùng DOM injection sink."],
+  [/postMessage\s*\([^,]+,\s*["'`]\*["'`]/, "postMessage phải dùng targetOrigin cụ thể, không dùng '*'. "],
+  [/document\.createElement\s*\(\s*["'`]script["'`]\s*\)/, "Không tạo script động nếu chưa có CSP/SRI/allowlist rõ ràng."],
   [/\bconsole\.log\s*\(/, "Không commit console.log trong source chính."],
 ];
 
@@ -89,6 +91,15 @@ for (const file of sourceRoots.flatMap(walk).filter(isSourceFile)) {
   if (repoPath.startsWith("app/api/") && hasMutation && !isSignOut && !/check(RateLimit|MutationRateLimit)\s*\(/.test(text)) {
     failures.push(`${repoPath}: Mutation API cần rate limit.`);
   }
+}
+
+const rateLimitText = readFileSync(join(root, "lib", "security", "rate-limit.ts"), "utf8");
+if (!/NODE_ENV\s*!==\s*["'`]production["'`]/.test(rateLimitText)) {
+  failures.push("lib/security/rate-limit.ts: Production phải fail-closed khi thiếu RPC rate limit.");
+}
+
+if (!/throw new PublicRequestError\(500/.test(rateLimitText)) {
+  failures.push("lib/security/rate-limit.ts: Lỗi rate-limit hạ tầng phải trả lỗi an toàn thay vì cho qua.");
 }
 
 if (failures.length) {

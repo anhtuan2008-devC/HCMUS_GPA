@@ -1,0 +1,73 @@
+{
+  "color": {
+    "background": { "value": "#f4f8ff" },
+    "foreground": { "value": "#001936" },
+    "surface": { "value": "#ffffff" },
+    "surfaceSoft": { "value": "#f7faff" },
+    "surfaceTint": { "value": "#eaf3ff" },
+    "muted": { "value": "#5d6d84" },
+    "line": { "value": "rgba(0, 25, 54, 0.12)" },
+    "lineStrong": { "value": "rgba(0, 25, 54, 0.2)" },
+    "brandPrimary": { "value": "#003f88" },
+    "brandPrimaryStrong": { "value": "#012e6f" },
+    "brandNavy": { "value": "#001936" },
+    "brandNavyDeep": { "value": "#00142d" },
+    "brandAccent": { "value": "#0766ff" },
+    "brandAccentSoft": { "value": "#eaf3ff" },
+    "focusRing": { "value": "rgba(7, 102, 255, 0.22)" },
+    "orange": { "value": "#f5a524" },
+    "orangeSoft": { "value": "#fff4dc" },
+    "success": { "value": "#1f8a68" },
+    "danger": { "value": "#c44949" },
+    "warning": { "value": "#f5a524" }
+  },
+  "typography": {
+    "fontBody": { "value": "\"Segoe UI\", Roboto, Arial, sans-serif" },
+    "fontDisplay": { "value": "\"Segoe UI\", Roboto, Arial, sans-serif" },
+    "hero": { "value": "clamp(2rem, 5vw, 4.5rem)" },
+    "pageTitle": { "value": "clamp(1.75rem, 3.2vw, 3rem)" },
+    "sectionTitle": { "value": "clamp(1.25rem, 2vw, 1.75rem)" },
+    "cardTitle": { "value": "clamp(1rem, 1.5vw, 1.25rem)" },
+    "metricXl": { "value": "clamp(2rem, 4vw, 4rem)" },
+    "metricMd": { "value": "clamp(1.25rem, 2.4vw, 2rem)" },
+    "body": { "value": "0.95rem" },
+    "bodySm": { "value": "0.84rem" },
+    "caption": { "value": "0.75rem" },
+    "overline": { "value": "0.68rem" },
+    "tableCell": { "value": "0.78rem" }
+  },
+  "radius": {
+    "sm": { "value": "0.75rem" },
+    "md": { "value": "1rem" },
+    "lg": { "value": "1.5rem" },
+    "xl": { "value": "2rem" },
+    "pill": { "value": "999px" }
+  },
+  "shadow": {
+    "soft": { "value": "0 18px 54px rgba(0, 25, 54, 0.08)" },
+    "card": { "value": "0 16px 42px rgba(0, 25, 54, 0.11)" },
+    "brand": { "value": "0 24px 70px rgba(0, 25, 54, 0.24)" }
+  },
+  "motion": {
+    "durationFast": { "value": "180ms" },
+    "durationNormal": { "value": "260ms" },
+    "durationPage": { "value": "520ms" },
+    "durationCard": { "value": "560ms" },
+    "durationProgress": { "value": "1000ms" },
+    "durationSwitchTab": { "value": "220ms" },
+    "durationNumber": { "value": "900ms" },
+    "easeSmooth": { "value": "cubic-bezier(0.2, 0.85, 0.25, 1)" },
+    "easeSharp": { "value": "cubic-bezier(0.4, 0, 0.2, 1)" },
+    "easeBlueprint": { "value": "cubic-bezier(0.22, 1, 0.36, 1)" }
+  },
+  "density": {
+    "rootSmallPhone": { "value": "13.6px" },
+    "rootMobile": { "value": "14px" },
+    "rootTablet": { "value": "14.4px" },
+    "rootDesktop": { "value": "12.8px" },
+    "appMaxWidth": { "value": "93.75rem" },
+    "appSidebarWidth": { "value": "17.5rem" },
+    "blueprintGrid": { "value": "1.75rem" },
+    "controlHeight": { "value": "2.75rem" }
+  }
+}

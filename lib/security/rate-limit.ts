@@ -52,7 +52,11 @@ export async function checkRateLimit(
 
   if (error) {
     if (isMissingRateLimitFunction(error)) {
-      return;
+      if (process.env.NODE_ENV !== "production") {
+        return;
+      }
+
+      throw new PublicRequestError(500, "Chưa kiểm tra được giới hạn thao tác. Bạn thử lại sau nhé.");
     }
 
     throw new PublicRequestError(500, "Chưa kiểm tra được giới hạn thao tác. Bạn thử lại sau nhé.");

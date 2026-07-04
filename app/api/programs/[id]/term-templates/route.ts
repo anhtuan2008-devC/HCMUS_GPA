@@ -1,6 +1,6 @@
 import { getProgramTermTemplates, getSessionContext } from "@/lib/data/workspace";
 import { templatesDto } from "@/lib/data/dto";
-import { errorResponse, jsonOk, jsonUnauthorized } from "@/lib/security/api-response";
+import { errorResponse, jsonCatalogOk, jsonUnauthorized } from "@/lib/security/api-response";
 
 export async function GET(
   _request: Request,
@@ -16,7 +16,7 @@ export async function GET(
 
   try {
     const templates = await getProgramTermTemplates(supabase, id);
-    return jsonOk({ templates: templatesDto(templates) });
+    return jsonCatalogOk({ templates: templatesDto(templates) });
   } catch (routeError) {
     return errorResponse(routeError, "Chưa tải được kế hoạch học tập.");
   }

@@ -1,4 +1,7 @@
-import { PanelCard, MeterBar, StatusPill } from "@/components/workspace/ui";
+import { BookOpen, CheckCircle2, Compass, Layers3 } from "lucide-react";
+import { IconBadge, PanelCard, MeterBar, StatusPill } from "@/components/workspace/ui";
+import { AcademicCanvasScene } from "@/components/visual/academic-canvas-scene";
+import { CurriculumMap, Typography } from "@/components/ui";
 import { normalizeSearchText } from "@/lib/text";
 import { courseCategoryLabels, courseKindLabels, curriculumStatusLabels } from "@/lib/ui-copy";
 import type { Course, CurriculumStatus, ProgramCurriculum } from "@/lib/types";
@@ -47,17 +50,115 @@ export function CurriculumPanel({
   onSearchChange: (value: string) => void;
   getCourseStatus: (course: Course) => CurriculumStatus;
 }>) {
+  const coursesWithStatus = program.courses.map((course) => ({
+    course,
+    status: getCourseStatus(course),
+  }));
+  const courseStatusMap = new Map(coursesWithStatus.map((item) => [item.course.id, item.status]));
+  const trackedCreditsTotal =
+    program.requirementSections
+      .filter((section) => section.countsTowardProgramTotal)
+      .reduce((sum, section) => sum + section.totalCredits, 0) || program.totalCredits;
+  const earnedProgramCredits = coursesWithStatus
+    .filter((item) => item.course.countsTowardProgress && item.status === "passed")
+    .reduce((sum, item) => sum + item.course.credits, 0);
+  const plannedCourseCount = coursesWithStatus.filter((item) => item.status === "planned").length;
+  const passedCourseCount = coursesWithStatus.filter((item) => item.status === "passed").length;
+  const conditionCourseCount = program.courses.filter(
+    (course) => !course.countsTowardGpa && !course.countsTowardProgress,
+  ).length;
+  const curriculumCompletionRate = trackedCreditsTotal
+    ? Math.min(100, (earnedProgramCredits / trackedCreditsTotal) * 100)
+    : 0;
+  const curriculumSignals = [
+    {
+      label: "Tiến độ chính",
+      value: `${earnedProgramCredits}/${trackedCreditsTotal}`,
+      helper: "tín chỉ tốt nghiệp",
+      icon: CheckCircle2,
+      tone: "success" as const,
+    },
+    {
+      label: "Đã hoàn thành",
+      value: passedCourseCount.toString(),
+      helper: "học phần",
+      icon: BookOpen,
+      tone: "brand" as const,
+    },
+    {
+      label: "Đang lên kế hoạch",
+      value: plannedCourseCount.toString(),
+      helper: "học phần",
+      icon: Compass,
+      tone: "orange" as const,
+    },
+    {
+      label: "Điều kiện riêng",
+      value: conditionCourseCount.toString(),
+      helper: "không cộng 138 TC",
+      icon: Layers3,
+      tone: "brand" as const,
+    },
+  ];
+
   return (
     <div className="space-y-4">
+      <section className="cockpit-hero learning-cockpit overflow-hidden rounded-[1.35rem] border border-[var(--line)] p-3 sm:rounded-[2rem] sm:p-5">
+        <AcademicCanvasScene className="opacity-26" density="low" variant="curriculum-map" />
+        <div className="relative grid gap-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-center">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--brand-primary)] sm:text-sm sm:tracking-[0.22em]">
+              Bản đồ CTĐT
+            </p>
+            <Typography as="h2" variant="section-title" className="mt-2 text-[var(--foreground)]">
+              Nhìn toàn bộ hành trình, biết đoạn nào đã sáng đèn.
+            </Typography>
+            <Typography variant="body-sm" className="mt-3 max-w-2xl text-[var(--muted)]">
+              Mỗi nhóm học phần được giữ đúng cấu trúc chương trình, còn các điều kiện riêng như Anh văn,
+              GDTC và GDQPAN được tách khỏi 138 tín chỉ chính để bạn theo dõi rõ ràng hơn.
+            </Typography>
+            <div className="mt-4 max-w-lg">
+              <div className="mb-2 flex items-center justify-between text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
+                <span>Nhịp hoàn thành</span>
+                <span>{Math.round(curriculumCompletionRate)}%</span>
+              </div>
+              <MeterBar value={curriculumCompletionRate} />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 sm:gap-3">
+            {curriculumSignals.map((signal) => {
+              const SignalIcon = signal.icon;
+
+              return (
+                <article key={signal.label} className="learning-signal-card group rounded-[1.1rem] p-3 sm:rounded-[1.5rem] sm:p-4">
+                  <div className="flex items-center justify-between gap-2">
+                    <IconBadge tone={signal.tone}>
+                      <SignalIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+                    </IconBadge>
+                    <span className="data-thread-dot h-2.5 w-2.5 rounded-full bg-[var(--brand-accent)]" />
+                  </div>
+                  <p className="mt-3 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-[var(--muted)] sm:text-xs">
+                    {signal.label}
+                  </p>
+                  <p className="mt-1 text-xl font-bold text-[var(--foreground)] sm:text-2xl">{signal.value}</p>
+                  <p className="mt-1 text-xs leading-5 text-[var(--muted)] sm:text-sm">{signal.helper}</p>
+                </article>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
       <PanelCard className="space-y-3 sm:space-y-4">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted)] sm:text-sm sm:tracking-[0.2em]">
               Chương trình học
             </p>
-            <h2 className="mt-2 font-[family-name:var(--font-display)] text-2xl text-[var(--foreground)] sm:mt-3 sm:text-3xl">
+            <Typography as="h2" variant="section-title" className="mt-2 text-[var(--foreground)] sm:mt-3">
               Theo dõi từng nhóm học phần.
-            </h2>
+            </Typography>
           </div>
           <label className="block w-full max-w-md">
             <span className="mb-2 block text-sm font-medium text-[var(--foreground)]">Tìm theo mã, tên, ghi chú</span>
@@ -85,6 +186,7 @@ export function CurriculumPanel({
               tổng tín chỉ tích lũy tốt nghiệp.
             </p>
           </div>
+          <CurriculumMap sections={program.requirementSections} />
           <div className="grid grid-cols-2 gap-2 sm:gap-3 xl:grid-cols-4">
             {program.requirementSections.map((section) => (
               <article
@@ -137,7 +239,7 @@ export function CurriculumPanel({
         });
 
         const earnedCredits = courses
-          .filter((course) => course.countsTowardProgress && getCourseStatus(course) === "passed")
+          .filter((course) => course.countsTowardProgress && (courseStatusMap.get(course.id) ?? getCourseStatus(course)) === "passed")
           .reduce((sum, course) => sum + course.credits, 0);
         const completionRate = group.requiredCredits
           ? (Math.min(earnedCredits, group.requiredCredits) / group.requiredCredits) * 100
@@ -176,7 +278,7 @@ export function CurriculumPanel({
               </div>
               <div className="divide-y divide-[var(--line)]">
                 {visibleCourses.map((course) => {
-                  const status = getCourseStatus(course);
+                  const status = courseStatusMap.get(course.id) ?? getCourseStatus(course);
 
                   return (
                     <article

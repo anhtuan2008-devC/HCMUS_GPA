@@ -21,6 +21,15 @@ export function NotificationDropdown({
     return null;
   }
 
+  const urgentCount = notifications.filter((item) => item.tone === "danger").length;
+  const warningCount = notifications.filter((item) => item.tone === "warning").length;
+  const steadyCount = notifications.length - urgentCount - warningCount;
+  const summaryItems = [
+    { label: "Cần xử lý", value: urgentCount },
+    { label: "Nhắc nhở", value: warningCount },
+    { label: "Ổn định", value: steadyCount },
+  ];
+
   return (
     <div
       ref={dropdownRef}
@@ -43,6 +52,22 @@ export function NotificationDropdown({
         >
           <X className="h-5 w-5" />
         </button>
+      </div>
+
+      <div className="mt-3 grid grid-cols-3 gap-2 lg:mt-4">
+        {summaryItems.map((item) => (
+          <div
+            key={item.label}
+            className="rounded-[1rem] border border-[var(--line)] bg-white/72 px-2 py-2 text-center lg:rounded-[1.25rem] lg:px-3"
+          >
+            <p className="text-[0.58rem] font-semibold uppercase tracking-[0.1em] text-[var(--muted)] lg:text-[0.68rem]">
+              {item.label}
+            </p>
+            <p className="mt-1 text-base font-bold tabular-nums text-[var(--foreground)] lg:text-xl">
+              {item.value}
+            </p>
+          </div>
+        ))}
       </div>
 
       <div className="scrollbar-subtle mt-3 space-y-2 overflow-y-auto pr-1 lg:mt-5 lg:space-y-3">

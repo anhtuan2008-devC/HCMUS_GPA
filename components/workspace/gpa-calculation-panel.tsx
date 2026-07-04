@@ -3,8 +3,10 @@
 import { useDeferredValue, useState } from "react";
 import {
   ArrowLeft,
+  Activity,
   Calculator,
   CheckCircle2,
+  Gauge,
   RotateCcw,
   Search,
   SlidersHorizontal,
@@ -13,6 +15,8 @@ import {
 } from "lucide-react";
 import { AnimatedNumber } from "@/components/workspace/animated-number";
 import { IconBadge, PanelCard, StatusPill } from "@/components/workspace/ui";
+import { AcademicCanvasScene } from "@/components/visual/academic-canvas-scene";
+import { Typography } from "@/components/ui";
 import { calculateGpaBreakdown } from "@/lib/grade";
 import { normalizeSearchText } from "@/lib/text";
 import { recordStatusLabels } from "@/lib/ui-copy";
@@ -103,6 +107,37 @@ export function GpaCalculationPanel({
     ["Tổng điểm mô phỏng", formatNumber(simulatedBreakdown.simulatedWeightedScore10Total)],
     ["Số học phần tính GPA mô phỏng", `${simulatedBreakdown.simulatedGpaCourseCount} học phần`],
   ];
+  const simulationDelta10 = simulatedBreakdown.simulatedGpa10 - officialBreakdown.officialGpa10;
+  const simulationSignals = [
+    {
+      label: "Độ lệch mô phỏng",
+      value: `${simulationDelta10 >= 0 ? "+" : ""}${simulationDelta10.toFixed(3)}`,
+      helper: "so với quy tắc thật",
+      icon: Activity,
+      tone: "brand" as const,
+    },
+    {
+      label: "Đang tính",
+      value: simulatedBreakdown.simulatedGpaCourseCount.toString(),
+      helper: `${simulatedBreakdown.simulatedGpaCredits} tín chỉ GPA`,
+      icon: CheckCircle2,
+      tone: "success" as const,
+    },
+    {
+      label: "Đã can thiệp",
+      value: changedRows.length.toString(),
+      helper: "học phần override",
+      icon: Sparkles,
+      tone: "orange" as const,
+    },
+    {
+      label: "Phạm vi kỳ",
+      value: isTermScoped ? "1" : officialBreakdown.availableTerms.length.toString(),
+      helper: isTermScoped ? "học kỳ đang xem" : "học kỳ có dữ liệu",
+      icon: Gauge,
+      tone: "brand" as const,
+    },
+  ];
 
   function handleTermChange(nextTermLabel: string) {
     setSelectedTermLabel(nextTermLabel);
@@ -135,6 +170,7 @@ export function GpaCalculationPanel({
         <div className="metric-card relative overflow-hidden px-4 py-4 text-white sm:px-6 sm:py-6">
           <div className="absolute -right-12 -top-16 h-48 w-48 rounded-full bg-white/10 blur-2xl" />
           <div className="absolute bottom-4 right-8 hidden h-28 w-28 rotate-12 rounded-[2rem] border border-white/10 bg-white/10 lg:block" />
+          <AcademicCanvasScene className="opacity-34" density="low" variant="analytics-grid" />
           <button
             type="button"
             onClick={onBack}
@@ -149,33 +185,58 @@ export function GpaCalculationPanel({
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/72 sm:text-sm sm:tracking-[0.22em]">
                 GPA Lab
               </p>
-              <h2 className="mt-2 font-[family-name:var(--font-display)] text-2xl font-bold sm:mt-3 sm:text-4xl">
+              <Typography as="h2" variant="page-title" className="mt-2 text-white sm:mt-3">
                 Thử cách tính, hiểu từng tín chỉ.
-              </h2>
-              <p className="mt-3 max-w-3xl text-sm leading-7 text-white/78">
+              </Typography>
+              <Typography variant="body-sm" className="mt-3 max-w-3xl text-white/78">
                 Chọn học kỳ, bật tắt học phần để mô phỏng GPA. Những thay đổi ở đây chỉ để
                 thử kịch bản và không ghi vào dữ liệu thật.
-              </p>
+              </Typography>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 sm:gap-3">
-              <div className="rounded-[1.15rem] border border-white/14 bg-white/12 p-3 sm:rounded-[1.5rem] sm:p-5">
-                <p className="text-sm text-white/70">GPA mô phỏng hệ 10</p>
-                <p className="mt-2 text-2xl font-bold sm:text-4xl">
-                  <AnimatedNumber value={simulatedBreakdown.simulatedGpa10} decimals={3} />
-                </p>
-                <p className="mt-1 text-sm text-white/75">
-                  Chính thức: {formatNumber(officialBreakdown.officialGpa10)}
-                </p>
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                <div className="rounded-[1.15rem] border border-white/14 bg-white/12 p-3 sm:rounded-[1.5rem] sm:p-5">
+                  <p className="text-sm text-white/70">GPA mô phỏng hệ 10</p>
+                  <p className="mt-2 text-2xl font-bold sm:text-4xl">
+                    <AnimatedNumber value={simulatedBreakdown.simulatedGpa10} decimals={3} />
+                  </p>
+                  <p className="mt-1 text-sm text-white/75">
+                    Chính thức: {formatNumber(officialBreakdown.officialGpa10)}
+                  </p>
+                </div>
+                <div className="rounded-[1.15rem] border border-white/14 bg-white/12 p-3 sm:rounded-[1.5rem] sm:p-5">
+                  <p className="text-sm text-white/70">GPA mô phỏng hệ 4</p>
+                  <p className="mt-2 text-2xl font-bold sm:text-4xl">
+                    <AnimatedNumber value={simulatedBreakdown.simulatedGpa4} decimals={2} />
+                  </p>
+                  <p className="mt-1 text-sm text-white/75">
+                    {simulatedBreakdown.simulatedGpaCredits} tín chỉ đang tính
+                  </p>
+                </div>
               </div>
-              <div className="rounded-[1.15rem] border border-white/14 bg-white/12 p-3 sm:rounded-[1.5rem] sm:p-5">
-                <p className="text-sm text-white/70">GPA mô phỏng hệ 4</p>
-                <p className="mt-2 text-2xl font-bold sm:text-4xl">
-                  <AnimatedNumber value={simulatedBreakdown.simulatedGpa4} decimals={2} />
-                </p>
-                <p className="mt-1 text-sm text-white/75">
-                  {simulatedBreakdown.simulatedGpaCredits} tín chỉ đang tính
-                </p>
+              <div className="grid grid-cols-2 gap-2">
+                {simulationSignals.map((signal) => {
+                  const SignalIcon = signal.icon;
+
+                  return (
+                    <article key={signal.label} className="rounded-[1rem] border border-white/12 bg-white/10 p-3 backdrop-blur-sm">
+                      <div className="flex items-center justify-between gap-2">
+                        <SignalIcon className="h-4 w-4 text-white/78" />
+                        <span className="data-thread-dot h-2 w-2 rounded-full bg-white/70" />
+                      </div>
+                      <p className="mt-2 text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-white/58">
+                        {signal.label}
+                      </p>
+                      <p className="mt-1 truncate text-base font-bold text-white" title={signal.value}>
+                        {signal.value}
+                      </p>
+                      <p className="mt-0.5 truncate text-[0.7rem] text-white/68" title={signal.helper}>
+                        {signal.helper}
+                      </p>
+                    </article>
+                  );
+                })}
               </div>
             </div>
           </div>

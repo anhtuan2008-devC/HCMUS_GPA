@@ -8,6 +8,11 @@ export const privateNoStoreHeaders = {
   Expires: "0",
 } as const;
 
+export const privateCatalogCacheHeaders = {
+  "Cache-Control": "private, max-age=300, stale-while-revalidate=3600",
+  Vary: "Cookie",
+} as const;
+
 export function noStoreHeaders(extra?: HeadersInit): HeadersInit {
   return {
     ...privateNoStoreHeaders,
@@ -33,6 +38,16 @@ export function jsonError(message: string, status = 500, issues?: string[]) {
       headers: noStoreHeaders(),
     },
   );
+}
+
+export function jsonCatalogOk<T>(body: T, init?: ResponseInit) {
+  return NextResponse.json(body, {
+    ...init,
+    headers: {
+      ...privateCatalogCacheHeaders,
+      ...init?.headers,
+    },
+  });
 }
 
 export function jsonUnauthorized(message = "Bạn cần đăng nhập để tiếp tục.") {

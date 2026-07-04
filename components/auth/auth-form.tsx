@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, GraduationCap, ShieldCheck, Sparkles } from "lucide-react";
 import { Button, Field, TextInput } from "@/components/ui";
 import { DEFAULT_APP_PATH } from "@/lib/app-routes";
 
@@ -88,6 +88,19 @@ export function AuthForm({
     router.replace(nextMode === "sign-up" ? "/dang-ky" : "/dang-nhap");
   }
 
+  const authSignals = [
+    {
+      label: "Dữ liệu riêng tư",
+      description: "Mỗi tài khoản chỉ nhìn thấy hồ sơ và kết quả học tập của chính mình.",
+      icon: ShieldCheck,
+    },
+    {
+      label: "Hành trình rõ ràng",
+      description: "GPA, tín chỉ và kế hoạch học kỳ được gom vào một không gian dễ theo dõi.",
+      icon: Sparkles,
+    },
+  ];
+
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-7xl items-center px-3 py-4 sm:px-6 sm:py-8 lg:px-8">
       <div className="grid w-full gap-4 sm:gap-6 lg:grid-cols-[1.05fr_minmax(23.75rem,0.9fr)]">
@@ -111,22 +124,33 @@ export function AuthForm({
             GPA hiện tại, tín chỉ còn thiếu và kế hoạch học kỳ tiếp theo.
           </p>
           <div className="mt-10 grid gap-3">
-            <div className="rounded-2xl border border-white/12 bg-white/10 px-4 py-4">
-              <ShieldCheck className="h-5 w-5 text-blue-100" />
-              <p className="mt-3 text-sm leading-6 text-white/78">
-                Dữ liệu học tập của bạn được lưu riêng cho tài khoản của bạn.
-              </p>
-            </div>
-            <div className="rounded-2xl border border-white/12 bg-white/10 px-4 py-4">
-              <Sparkles className="h-5 w-5 text-blue-100" />
-              <p className="mt-3 text-sm leading-6 text-white/78">
-                Giao diện tập trung vào hành động tiếp theo, không bắt bạn đọc những phần rườm rà.
-              </p>
-            </div>
+            {authSignals.map((signal) => {
+              const SignalIcon = signal.icon;
+
+              return (
+                <div key={signal.label} className="rounded-2xl border border-white/12 bg-white/10 px-4 py-4">
+                  <SignalIcon className="h-5 w-5 text-blue-100" />
+                  <p className="mt-3 text-sm font-semibold text-white">{signal.label}</p>
+                  <p className="mt-1 text-sm leading-6 text-white/72">{signal.description}</p>
+                </div>
+              );
+            })}
           </div>
         </section>
 
         <section className="soft-card motion-card rounded-[1.5rem] p-4 sm:rounded-[2.5rem] sm:p-8">
+          <div className="mb-4 flex items-center gap-3 rounded-[1.15rem] border border-[var(--line)] bg-[var(--surface-tint)] p-3 lg:hidden">
+            <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--brand-primary)] text-white shadow-[0_12px_28px_rgba(0,63,136,0.22)]">
+              <GraduationCap className="h-5 w-5" />
+            </span>
+            <span className="min-w-0">
+              <span className="block text-sm font-bold text-[var(--foreground)]">HCMUS GPA</span>
+              <span className="block truncate text-xs text-[var(--muted)]">
+                Không gian theo dõi học tập cá nhân
+              </span>
+            </span>
+          </div>
+
           <div className="flex items-center gap-2 rounded-full border border-[var(--line)] bg-white/75 p-1">
             <button
               type="button"
@@ -211,6 +235,20 @@ export function AuthForm({
               {!isSubmitting ? <ArrowRight className="h-4 w-4" /> : null}
             </Button>
           </form>
+
+          <div className="mt-5 grid grid-cols-2 gap-2 text-xs sm:gap-3 sm:text-sm">
+            {authSignals.map((signal) => {
+              const SignalIcon = signal.icon;
+
+              return (
+                <article key={signal.label} className="rounded-[1rem] border border-[var(--line)] bg-white/68 p-3 sm:rounded-[1.25rem]">
+                  <SignalIcon className="h-4 w-4 text-[var(--brand-primary)]" />
+                  <p className="mt-2 font-semibold text-[var(--foreground)]">{signal.label}</p>
+                  <p className="mt-1 hidden leading-5 text-[var(--muted)] sm:block">{signal.description}</p>
+                </article>
+              );
+            })}
+          </div>
 
           <p className="mt-5 text-sm text-[var(--muted)]">
             Muốn xem lại trang giới thiệu?{" "}

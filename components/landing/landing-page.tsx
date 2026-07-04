@@ -1,6 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, BookOpenCheck, LineChart, Sparkles } from "lucide-react";
+import { AcademicCanvasScene } from "@/components/visual/academic-canvas-scene";
+import { Typography, VectorBadge } from "@/components/ui";
 
 const programs = [
   {
@@ -43,11 +45,25 @@ const highlights = [
   },
 ];
 
+const cockpitMetrics = [
+  ["4", "CTĐT khóa 2024"],
+  ["10→4", "quy đổi GPA"],
+  ["138", "tín chỉ chính"],
+];
+
+const journeySteps = [
+  "Chọn chương trình học",
+  "Ghi nhận kết quả thật",
+  "Lập kế hoạch kỳ tới",
+  "Dự báo mục tiêu GPA",
+];
+
 export function LandingPage() {
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-4 px-3 py-4 sm:gap-8 sm:px-6 sm:py-6 lg:px-8 lg:py-10">
-      <section className="soft-card motion-page relative overflow-hidden rounded-[1.5rem] px-4 py-6 sm:rounded-[2.5rem] sm:px-8 lg:px-12 lg:py-14">
+      <section className="surface-blueprint motion-page relative overflow-hidden rounded-[1.5rem] px-4 py-6 sm:rounded-[2.5rem] sm:px-8 lg:px-12 lg:py-14">
         <div className="pointer-events-none absolute inset-x-0 top-0 h-72 bg-[radial-gradient(circle_at_top_left,rgba(7,102,255,0.18),transparent_44%),radial-gradient(circle_at_top_right,rgba(0,63,136,0.18),transparent_42%)]" />
+        <AcademicCanvasScene className="opacity-70" variant="landing-blueprint" />
         <div className="relative grid gap-6 sm:gap-10 lg:grid-cols-[1.2fr_minmax(20rem,0.8fr)] lg:items-center">
           <div className="space-y-5 sm:space-y-7">
             <div className="inline-flex items-center gap-3 rounded-[1.15rem] border border-[var(--line)] bg-white/80 px-3 py-2.5 shadow-[0_12px_32px_rgba(0,25,54,0.08)] sm:gap-4 sm:rounded-[1.5rem] sm:px-4 sm:py-3">
@@ -65,13 +81,13 @@ export function LandingPage() {
               </span>
             </div>
             <div className="space-y-4">
-              <h1 className="max-w-3xl font-[family-name:var(--font-display)] text-3xl font-bold leading-tight text-[var(--foreground)] sm:text-5xl lg:text-6xl">
+              <Typography as="h1" variant="hero" className="max-w-3xl text-[var(--foreground)]">
                 Tự quản lý GPA, tiến độ tốt nghiệp và kế hoạch học kỳ của bạn.
-              </h1>
-              <p className="max-w-2xl text-sm leading-7 text-[var(--muted)] sm:text-lg sm:leading-8">
+              </Typography>
+              <Typography variant="body" className="max-w-2xl text-[var(--muted)]">
                 HCMUS GPA giúp bạn biến những con số rời rạc thành một hành trình rõ ràng:
                 biết mình đang ở đâu, còn thiếu gì và nên ưu tiên điều gì trong học kỳ tới.
-              </p>
+              </Typography>
             </div>
             <div className="flex flex-wrap gap-3">
               <Link
@@ -93,15 +109,55 @@ export function LandingPage() {
           <div className="grid gap-4">
             <div className="metric-card relative overflow-hidden rounded-[1.5rem] p-4 text-white sm:rounded-[2rem] sm:p-6">
               <div className="absolute right-5 top-5 h-24 w-24 rounded-full bg-white/10 blur-2xl" />
-              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-white/70">
+              <AcademicCanvasScene className="opacity-45" density="low" variant="dashboard-orbit" />
+              <p className="typo-overline relative text-white/70">
                 Mục tiêu hôm nay
               </p>
-              <p className="mt-4 text-4xl font-bold tracking-tight sm:mt-6 sm:text-5xl">3.20</p>
-              <p className="mt-2 text-sm text-white/70">GPA hệ 4 mục tiêu</p>
-              <div className="mt-4 rounded-xl border border-white/15 bg-white/10 px-3 py-2.5 text-sm leading-6 text-white/82 sm:mt-6 sm:rounded-2xl sm:px-4 sm:py-3">
+              <p className="relative mt-4 text-4xl font-bold tracking-tight sm:mt-6 sm:text-5xl">3.20</p>
+              <p className="relative mt-2 text-sm text-white/70">GPA hệ 4 mục tiêu</p>
+              <div className="relative mt-4 rounded-xl border border-white/15 bg-white/10 px-3 py-2.5 text-sm leading-6 text-white/82 sm:mt-6 sm:rounded-2xl sm:px-4 sm:py-3">
                 Tập trung vào môn then chốt, giữ nhịp điểm ổn định và theo dõi tiến độ sau mỗi lần cập nhật.
               </div>
             </div>
+            <div className="grid grid-cols-3 gap-2">
+              {cockpitMetrics.map(([value, label]) => (
+                <div
+                  key={label}
+                  className="learning-signal-card rounded-[1.1rem] border border-[var(--line)] bg-white/76 px-3 py-3 text-center shadow-[0_12px_32px_rgba(0,25,54,0.06)]"
+                >
+                  <p className="text-xl font-bold text-[var(--brand-primary)]">{value}</p>
+                  <p className="mt-1 text-[0.68rem] font-semibold leading-4 text-[var(--muted)]">{label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="soft-card motion-card learning-cockpit overflow-hidden rounded-[1.35rem] px-4 py-4 sm:rounded-[2rem] sm:px-5 sm:py-5">
+        <div className="relative flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted)]">
+              Một hành trình, bốn nhịp chính
+            </p>
+            <h2 className="mt-2 text-xl font-semibold text-[var(--foreground)] sm:text-2xl">
+              Từ dữ liệu rời rạc thành kế hoạch học tập có nhịp.
+            </h2>
+          </div>
+          <div className="grid gap-2 sm:grid-cols-4 lg:min-w-[38rem]">
+            {journeySteps.map((step, index) => (
+              <div
+                key={step}
+                className="learning-signal-card rounded-[1rem] border border-[var(--line)] bg-white/78 px-3 py-3"
+              >
+                <VectorBadge
+                  variant={index % 2 ? "path" : "map"}
+                  className="h-9 w-9 rounded-full bg-[var(--surface-tint)]"
+                  title={`Bước ${index + 1}`}
+                />
+                <p className="mt-3 text-sm font-semibold leading-5 text-[var(--foreground)]">{step}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>

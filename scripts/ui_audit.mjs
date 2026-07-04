@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync, statSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join, relative, sep } from "node:path";
 
 const root = process.cwd();
@@ -52,6 +52,10 @@ for (const file of sourceRoots.flatMap(walk).filter(isSourceFile)) {
   if (/purple|violet|fuchsia/i.test(text) && !repoPath.includes(".cursor")) {
     failures.push(`${repoPath}: Tránh màu purple/violet/fuchsia generic trong UI HCMUS.`);
   }
+
+  if (/transition-all/.test(text)) {
+    failures.push(`${repoPath}: Không dùng transition-all; giới hạn property để tránh jank.`);
+  }
 }
 
 const globals = readFileSync(join(root, "app", "globals.css"), "utf8");
@@ -59,6 +63,24 @@ for (const token of ["--brand-primary", "--brand-primary-strong", "--brand-navy"
   if (!globals.includes(token)) {
     failures.push(`app/globals.css: Thiếu token ${token}.`);
   }
+}
+
+for (const requiredFile of [
+  "design/tokens/hcmus.tokens.json",
+  "app/design-tokens.css",
+  "lib/design-tokens/tokens.ts",
+]) {
+  if (!existsSync(join(root, requiredFile))) {
+    failures.push(`${requiredFile}: Thiếu token artifact cho design system.`);
+  }
+}
+
+if (!globals.includes("@import \"./design-tokens.css\"")) {
+  failures.push("app/globals.css: Chưa import generated design tokens.");
+}
+
+if (!globals.includes("--motion-duration-page") || !globals.includes("--motion-ease-smooth")) {
+  failures.push("app/globals.css: Motion phải dùng token duration/easing thay vì hard-code rải rác.");
 }
 
 if (failures.length) {

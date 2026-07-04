@@ -1,4 +1,4 @@
-import { ArrowRight, GraduationCap } from "lucide-react";
+import { ArrowRight, BookOpenCheck, GraduationCap, MapPinned, ShieldCheck } from "lucide-react";
 import { Button, Field, SelectInput, TextInput } from "@/components/ui";
 import type { ProgramSummary } from "@/lib/types";
 import { IconBadge, PanelCard } from "@/components/workspace/ui";
@@ -24,6 +24,27 @@ export function OnboardingPanel({
   onChange: (field: keyof ProfileDraft, value: string | number) => void;
   onSubmit: () => void;
 }>) {
+  const onboardingSteps = [
+    {
+      label: "Hồ sơ",
+      description: "Gắn tên, MSSV và khóa tuyển để cá nhân hóa mọi số liệu.",
+      icon: GraduationCap,
+      tone: "brand" as const,
+    },
+    {
+      label: "CTĐT",
+      description: "Chọn đúng chương trình một lần, sau đó app giữ ổn định.",
+      icon: MapPinned,
+      tone: "orange" as const,
+    },
+    {
+      label: "Theo dõi",
+      description: "Nhập điểm, xem GPA và lập kế hoạch từ dữ liệu thật.",
+      icon: BookOpenCheck,
+      tone: "success" as const,
+    },
+  ];
+
   return (
     <PanelCard className="motion-page space-y-5 sm:space-y-7">
       <div className="grid gap-4 sm:gap-5 lg:grid-cols-[1fr_16.25rem] lg:items-start">
@@ -47,8 +68,32 @@ export function OnboardingPanel({
           </p>
         </div>
         <div className="rounded-[1.15rem] border border-[var(--line)] bg-[var(--surface-tint)] px-3 py-3 text-sm leading-7 text-[var(--muted)] sm:rounded-[1.5rem] sm:px-4 sm:py-4">
-          Sau khi lưu, bạn có thể bắt đầu nhập điểm từng học phần và xem tiến độ cập nhật ngay trên Tổng quan.
+          <div className="flex gap-2">
+            <ShieldCheck className="mt-1 h-4 w-4 shrink-0 text-[var(--brand-primary)]" />
+            <p>Sau khi lưu, chương trình đào tạo sẽ được khóa để tránh nhập nhầm dữ liệu về sau.</p>
+          </div>
         </div>
+      </div>
+
+      <div className="grid gap-2 sm:grid-cols-3 sm:gap-3">
+        {onboardingSteps.map((step, index) => {
+          const StepIcon = step.icon;
+
+          return (
+            <article key={step.label} className="learning-signal-card rounded-[1.1rem] p-3 sm:rounded-[1.5rem] sm:p-4">
+              <div className="flex items-center justify-between gap-2">
+                <IconBadge tone={step.tone}>
+                  <StepIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+                </IconBadge>
+                <span className="rounded-full bg-[var(--surface-tint)] px-2 py-1 text-[0.68rem] font-bold text-[var(--brand-primary)] ring-1 ring-[var(--line)]">
+                  0{index + 1}
+                </span>
+              </div>
+              <h3 className="mt-3 font-semibold text-[var(--foreground)]">{step.label}</h3>
+              <p className="mt-1 text-sm leading-6 text-[var(--muted)]">{step.description}</p>
+            </article>
+          );
+        })}
       </div>
 
       <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-2">

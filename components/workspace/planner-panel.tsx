@@ -30,6 +30,8 @@ import { normalizeSearchText } from "@/lib/text";
 import { buildAcademicTermOptions, findTermNumberByLabel } from "@/lib/terms";
 import { courseKindLabels } from "@/lib/ui-copy";
 import { IconBadge, PanelCard, StatusPill } from "@/components/workspace/ui";
+import { AcademicCanvasScene } from "@/components/visual/academic-canvas-scene";
+import { Typography } from "@/components/ui";
 
 type ExpectedDraft = {
   score10: string;
@@ -256,9 +258,74 @@ export function PlannerPanel({
       expectedRecords.some((record) => record.courseId === course.id && record.status === "passed" && course.countsTowardProgress),
     )
     .reduce((sum, course) => sum + course.credits, 0);
+  const selectedCredits = sumCredits(selectedCourses);
+  const expectedInputCount = selectedCourses.filter((course) => {
+    const draft = getExpectedDraft(course);
+
+    return draft.gradeInputMode === "pass_fail" || draft.score10.trim() !== "";
+  }).length;
+  const templateCoverageRate = selectedCourseIds.length
+    ? Math.round((selectedCourseIds.filter((courseId) => templateCourseIds.includes(courseId)).length / selectedCourseIds.length) * 100)
+    : 0;
+  const plannerMeta = [
+    ["Học kỳ", plannerTerm.replace(" - Năm học ", " · "), savedPlan ? "đã lưu" : "đang thiết kế"],
+    ["Môn đã chọn", selectedCourseIds.length.toString(), `${selectedCredits} tín chỉ`],
+    ["Điểm giả sử", expectedInputCount.toString(), "môn có dự báo"],
+    ["Theo kế hoạch chuẩn", `${templateCoverageRate}%`, templateCourseIds.length ? `${templateCourseIds.length} môn gợi ý` : "chưa có template"],
+  ];
 
   return (
     <div className="space-y-3 sm:space-y-5">
+      <section className="cockpit-hero learning-cockpit overflow-hidden rounded-[1.35rem] border border-[var(--line)] p-3 sm:rounded-[2rem] sm:p-5">
+        <AcademicCanvasScene className="opacity-28" density="low" variant="planner-path" />
+        <div className="relative grid gap-4 xl:grid-cols-[minmax(0,0.78fr)_minmax(0,1.22fr)] xl:items-center">
+          <div>
+            <div className="flex items-center gap-3">
+              <IconBadge tone="brand">
+                <CalendarCheck className="h-5 w-5" />
+              </IconBadge>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--brand-primary)] sm:text-sm sm:tracking-[0.22em]">
+                  Planner Studio
+                </p>
+                <Typography as="h2" variant="section-title" className="mt-1 text-[var(--foreground)]">
+                  Lập kỳ học như một bản thử nghiệm có số.
+                </Typography>
+              </div>
+            </div>
+            <p className="mt-3 max-w-2xl text-sm leading-7 text-[var(--muted)]">
+              Chọn môn, nhập điểm giả sử và lưu kế hoạch thật. Dự báo chỉ hỗ trợ ra quyết định,
+              không ghi vào lịch sử điểm.
+            </p>
+          </div>
+
+          <div className="rounded-[1.15rem] border border-[var(--line)] bg-white/76 p-3 shadow-[0_14px_36px_rgba(0,25,54,0.06)] sm:rounded-[1.75rem] sm:p-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">
+              Dự báo khi lưu kế hoạch
+            </p>
+            <div className="mt-3 rounded-[1rem] bg-[var(--brand-primary)] px-4 py-4 text-white">
+              <p className="text-xs font-semibold text-white/70">CPA sau kỳ này</p>
+              <p className="mt-1 text-3xl font-bold tabular-nums sm:text-4xl">{cpaProjection.gpa10.toFixed(3)}</p>
+              <p className="mt-1 text-sm text-white/72">{cpaProjection.gpa4.toFixed(2)} hệ 4</p>
+            </div>
+            <div className="mt-2 grid grid-cols-3 gap-2">
+              <div className="rounded-[1rem] bg-[var(--surface-tint)] px-3 py-2">
+                <p className="text-xs text-[var(--muted)]">GPA kỳ</p>
+                <p className="font-bold tabular-nums text-[var(--foreground)]">{termProjection.gpa10.toFixed(3)}</p>
+              </div>
+              <div className="rounded-[1rem] bg-[var(--surface-tint)] px-3 py-2">
+                <p className="text-xs text-[var(--muted)]">Tín chỉ đạt</p>
+                <p className="font-bold tabular-nums text-[var(--foreground)]">{expectedProgressCredits} TC</p>
+              </div>
+              <div className="rounded-[1rem] bg-[var(--surface-tint)] px-3 py-2">
+                <p className="text-xs text-[var(--muted)]">Trạng thái</p>
+                <p className="truncate font-bold text-[var(--foreground)]">{savedPlan ? "Đã lưu" : "Bản nháp"}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <PanelCard className="space-y-4 sm:space-y-6">
         <div className="flex items-start gap-3">
           <IconBadge tone="brand">
@@ -313,23 +380,19 @@ export function PlannerPanel({
           </label>
         </div>
 
-        <div className="grid grid-cols-2 gap-2 rounded-[1.15rem] border border-[var(--line)] bg-[var(--surface-tint)] px-3 py-3 sm:grid-cols-4 sm:gap-3 sm:rounded-[1.5rem] sm:px-4 sm:py-4">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">Template</p>
-            <p className="mt-1 text-xl font-bold text-[var(--foreground)] sm:mt-2 sm:text-2xl">{templateCourseIds.length}</p>
-            <p className="text-sm text-[var(--muted)]">môn gợi ý</p>
+        <div className="grid gap-2 rounded-[1.15rem] border border-[var(--line)] bg-[var(--surface-tint)] px-3 py-3 sm:rounded-[1.5rem] sm:px-4 sm:py-4 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
+            {plannerMeta.map(([label, value, helper]) => (
+              <div key={label} className="rounded-[1rem] bg-white/76 px-3 py-2">
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">{label}</p>
+                <p className="mt-1 truncate text-lg font-bold text-[var(--foreground)]" title={value}>
+                  {value}
+                </p>
+                <p className="truncate text-xs text-[var(--muted)]" title={helper}>{helper}</p>
+              </div>
+            ))}
           </div>
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">Đã chọn</p>
-            <p className="mt-1 text-xl font-bold text-[var(--foreground)] sm:mt-2 sm:text-2xl">{selectedCourseIds.length}</p>
-            <p className="text-sm text-[var(--muted)]">học phần</p>
-          </div>
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">Tín chỉ</p>
-            <p className="mt-1 text-xl font-bold text-[var(--foreground)] sm:mt-2 sm:text-2xl">{sumCredits(selectedCourses)}</p>
-            <p className="text-sm text-[var(--muted)]">dự kiến</p>
-          </div>
-          <div className="col-span-2 flex items-end sm:col-span-1">
+          <div className="flex items-end">
             <button
               type="button"
               onClick={replaceWithTemplate}
@@ -339,29 +402,6 @@ export function PlannerPanel({
               Áp dụng kế hoạch chuẩn
             </button>
           </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
-          <article className="rounded-[1.15rem] border border-[var(--line)] bg-white/82 px-3 py-3 sm:rounded-[1.5rem] sm:px-4 sm:py-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">GPA kỳ dự kiến</p>
-            <p className="mt-1 text-xl font-bold text-[var(--foreground)] sm:mt-2 sm:text-2xl">{termProjection.gpa10.toFixed(3)}</p>
-            <p className="text-sm text-[var(--muted)]">{termProjection.gpa4.toFixed(2)} hệ 4</p>
-          </article>
-          <article className="rounded-[1.15rem] border border-[var(--line)] bg-white/82 px-3 py-3 sm:rounded-[1.5rem] sm:px-4 sm:py-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">CPA sau kỳ này</p>
-            <p className="mt-1 text-xl font-bold text-[var(--foreground)] sm:mt-2 sm:text-2xl">{cpaProjection.gpa10.toFixed(3)}</p>
-            <p className="text-sm text-[var(--muted)]">{cpaProjection.gpa4.toFixed(2)} hệ 4</p>
-          </article>
-          <article className="rounded-[1.15rem] border border-[var(--line)] bg-white/82 px-3 py-3 sm:rounded-[1.5rem] sm:px-4 sm:py-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">Tín chỉ GPA</p>
-            <p className="mt-1 text-xl font-bold text-[var(--foreground)] sm:mt-2 sm:text-2xl">{termProjection.attemptedCredits}</p>
-            <p className="text-sm text-[var(--muted)]">từ điểm giả sử</p>
-          </article>
-          <article className="rounded-[1.15rem] border border-[var(--line)] bg-white/82 px-3 py-3 sm:rounded-[1.5rem] sm:px-4 sm:py-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">Tín chỉ hoàn thành</p>
-            <p className="mt-1 text-xl font-bold text-[var(--foreground)] sm:mt-2 sm:text-2xl">{expectedProgressCredits}</p>
-            <p className="text-sm text-[var(--muted)]">nếu đạt như dự kiến</p>
-          </article>
         </div>
       </PanelCard>
 

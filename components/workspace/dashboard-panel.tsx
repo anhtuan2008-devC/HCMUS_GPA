@@ -10,15 +10,20 @@ import {
 } from "recharts";
 import { useState } from "react";
 import {
+  Activity,
   AlertTriangle,
   ArrowRight,
   BookOpenCheck,
   CalendarDays,
   CheckCircle2,
   Clock3,
+  Compass,
+  Target,
 } from "lucide-react";
 import { AnimatedNumber, useAnimatedNumber } from "@/components/workspace/animated-number";
-import { IconBadge, MeterBar, PanelCard, ProgressRing, StatusPill } from "@/components/workspace/ui";
+import { IconBadge, MeterBar, PanelCard, StatusPill } from "@/components/workspace/ui";
+import { AcademicCanvasScene } from "@/components/visual/academic-canvas-scene";
+import { CreditOrbit, Typography } from "@/components/ui";
 import { courseKindLabels, getAcademicRank } from "@/lib/ui-copy";
 import type {
   GpaSummary,
@@ -187,6 +192,58 @@ export function DashboardPanel({
       view: "curriculum" as ViewKey,
     },
   ];
+  const cockpitSignals = [
+    {
+      label: "Nhịp GPA",
+      value: summary.attemptedCredits ? summary.gpa10.toFixed(3) : "Mới bắt đầu",
+      title: rank,
+      description: summary.failedCourseCount
+        ? `${summary.failedCourseCount} môn cần quay lại để nhịp GPA sạch hơn.`
+        : "Nhịp điểm đang gọn, tiếp tục cập nhật sau mỗi học kỳ.",
+      icon: Activity,
+      tone: "brand" as const,
+    },
+    {
+      label: "Mốc tín chỉ",
+      value: `${progress.earnedCredits}/${progress.totalCredits}`,
+      title: "Tích lũy chính",
+      description: progress.remainingCredits
+        ? `Còn ${progress.remainingCredits} tín chỉ trong tổng chương trình.`
+        : "Bạn đã chạm mốc tín chỉ chính của chương trình.",
+      icon: Target,
+      tone: progress.remainingCredits ? "orange" as const : "success" as const,
+    },
+    {
+      label: "Kế hoạch kỳ",
+      value: savedPlan ? `${planCredits} TC` : "Chưa lưu",
+      title: plannerTerm,
+      description: savedPlan
+        ? `${planCourses.length} môn đang nằm trong kế hoạch đã lưu.`
+        : "Tạo kế hoạch thật để dashboard phản ánh học kỳ sắp tới.",
+      icon: Compass,
+      tone: savedPlan ? "success" as const : "orange" as const,
+    },
+  ];
+  const actionSteps = [
+    {
+      title: "Cập nhật điểm",
+      caption: records.length ? `${records.length} kết quả đã ghi nhận` : "Nhập điểm đầu tiên để mở nhịp theo dõi.",
+      done: records.length > 0,
+      view: "grades" as ViewKey,
+    },
+    {
+      title: "Rà chương trình",
+      caption: notStartedCount ? `${notStartedCount} môn chưa học cần được nhìn trước.` : "Danh sách môn đã được phủ kín.",
+      done: notStartedCount === 0,
+      view: "curriculum" as ViewKey,
+    },
+    {
+      title: "Chốt kế hoạch",
+      caption: savedPlan ? `Đã lưu kế hoạch cho ${plannerTerm}.` : "Chưa có kế hoạch thật cho kỳ đang chọn.",
+      done: Boolean(savedPlan),
+      view: "planner" as ViewKey,
+    },
+  ];
 
   return (
     <div className="space-y-3 sm:space-y-5">
@@ -198,15 +255,16 @@ export function DashboardPanel({
           aria-label="Xem cách tính GPA"
         >
           <div className="absolute -right-12 bottom-0 h-44 w-44 rounded-full border border-white/10" />
+          <AcademicCanvasScene className="opacity-38" density="low" variant="dashboard-orbit" />
           <div className="relative grid gap-3 sm:grid-cols-[1fr_10rem] sm:items-center sm:gap-6">
             <div>
               <p className="text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-white/68 sm:hidden">
                 GPA hiện tại
               </p>
               <p className="hidden text-sm font-medium text-white/72 sm:block">Xin chào, {profile.fullName}</p>
-              <h2 className="hidden font-[family-name:var(--font-display)] font-bold sm:mt-3 sm:block sm:text-3xl">
+              <Typography as="h2" variant="section-title" className="hidden text-white sm:mt-3 sm:block">
                 Tổng quan kết quả học tập của bạn
-              </h2>
+              </Typography>
               <div className="mt-2 sm:mt-8">
                 <p className="text-xs text-white/72 sm:text-sm">GPA hệ 4</p>
                 <div className="mt-2 flex items-end gap-2">
@@ -253,11 +311,12 @@ export function DashboardPanel({
               {animatedCompletionRate.toFixed(1)}%
             </span>
           </div>
-          <ProgressRing
-            value={animatedCompletionRate}
+          <CreditOrbit
+            value={Math.round(animatedEarnedCredits)}
+            total={progress.totalCredits}
             label={`${animatedCompletionRate.toFixed(1)}%`}
             sublabel={`${Math.round(animatedEarnedCredits)} / ${progress.totalCredits} tín chỉ`}
-            size="compact"
+            className="w-[8.5rem] sm:w-[10.5rem]"
           />
           <div className="grid gap-1 text-[0.68rem] sm:grid-cols-1 sm:gap-2 sm:text-sm">
             <div className="flex items-center justify-between">
@@ -306,19 +365,99 @@ export function DashboardPanel({
         </PanelCard>
       </div>
 
+      <PanelCard className="learning-cockpit content-visibility-auto space-y-4 sm:space-y-5" style={{ "--delay": "155ms" } as React.CSSProperties}>
+        <div className="relative flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted)]">
+              Learning cockpit
+            </p>
+            <Typography as="h3" variant="card-title" className="mt-2 text-[var(--foreground)]">
+              Nhịp học hôm nay của bạn
+            </Typography>
+            <Typography variant="body-sm" className="mt-1 max-w-2xl text-[var(--muted)]">
+              Ba tín hiệu ngắn để bạn biết nên tiếp tục bằng điểm số, chương trình hay kế hoạch học kỳ.
+            </Typography>
+          </div>
+          <button
+            type="button"
+            onClick={() => onNavigate(savedPlan ? "planner" : "grades")}
+            className="inline-flex min-h-10 items-center justify-center gap-2 rounded-full border border-[var(--line)] bg-white/82 px-4 py-2 text-sm font-semibold text-[var(--brand-primary)] transition hover:bg-white"
+          >
+            {savedPlan ? "Tinh chỉnh kế hoạch" : "Bắt đầu cập nhật"}
+            <ArrowRight className="h-4 w-4" />
+          </button>
+        </div>
+
+        <div className="relative grid gap-2 sm:grid-cols-3 sm:gap-3">
+          {cockpitSignals.map((signal) => {
+            const Icon = signal.icon;
+
+            return (
+              <article
+                key={signal.label}
+                className="learning-signal-card hover-lift rounded-[1.15rem] border border-[var(--line)] bg-white/78 p-3 sm:rounded-[1.5rem] sm:p-4"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">
+                      {signal.label}
+                    </p>
+                    <p className="typo-metric-md mt-2 truncate text-[var(--foreground)]">
+                      {signal.value}
+                    </p>
+                  </div>
+                  <IconBadge tone={signal.tone}>
+                    <Icon className="h-5 w-5" />
+                  </IconBadge>
+                </div>
+                <p className="mt-3 text-sm font-semibold text-[var(--foreground)]">{signal.title}</p>
+                <p className="mt-1 text-xs leading-5 text-[var(--muted)] sm:text-sm sm:leading-6">
+                  {signal.description}
+                </p>
+              </article>
+            );
+          })}
+        </div>
+
+        <div className="data-thread relative grid gap-2 sm:grid-cols-3">
+          {actionSteps.map((step, index) => (
+            <button
+              key={step.title}
+              type="button"
+              onClick={() => onNavigate(step.view)}
+              className="group relative flex min-w-0 items-start gap-3 rounded-[1.15rem] border border-[var(--line)] bg-white/58 px-3 py-3 text-left transition hover:border-[var(--line-strong)] hover:bg-white/82 sm:rounded-[1.35rem]"
+            >
+              <span
+                className={`data-thread-dot relative z-10 mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold ring-1 ${
+                  step.done
+                    ? "bg-[var(--brand-primary)] text-white ring-[var(--brand-primary)]"
+                    : "bg-white text-[var(--brand-primary)] ring-blue-100"
+                }`}
+              >
+                {step.done ? "✓" : index + 1}
+              </span>
+              <span className="min-w-0">
+                <span className="block text-sm font-semibold text-[var(--foreground)]">{step.title}</span>
+                <span className="mt-1 block text-xs leading-5 text-[var(--muted)]">{step.caption}</span>
+              </span>
+            </button>
+          ))}
+        </div>
+      </PanelCard>
+
       {progress.conditionProgress.totalCourses ? (
-        <PanelCard className="space-y-4" style={{ "--delay": "165ms" } as React.CSSProperties}>
+        <PanelCard className="content-visibility-auto space-y-4" style={{ "--delay": "165ms" } as React.CSSProperties}>
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex items-start gap-3">
               <IconBadge tone={progress.conditionProgress.pendingCourses ? "orange" : "success"}>
                 <CheckCircle2 className="h-5 w-5" />
               </IconBadge>
               <div>
-                <h3 className="text-lg font-semibold text-[var(--foreground)]">Điều kiện cần hoàn thành</h3>
-                <p className="mt-1 max-w-3xl text-sm leading-6 text-[var(--muted)]">
+              <Typography as="h3" variant="card-title" className="text-[var(--foreground)]">Điều kiện cần hoàn thành</Typography>
+                <Typography variant="body-sm" className="mt-1 max-w-3xl text-[var(--muted)]">
                   Ngoại ngữ, GDTC và GDQPAN được theo dõi riêng: không tính GPA và không cộng vào
                   {` ${program.totalCredits} tín chỉ`} tích lũy tốt nghiệp.
-                </p>
+                </Typography>
               </div>
             </div>
             <div className="grid gap-3 sm:min-w-[26rem] sm:grid-cols-[8rem_1fr_auto] sm:items-center">
@@ -352,16 +491,16 @@ export function DashboardPanel({
         </PanelCard>
       ) : null}
 
-      <PanelCard className="space-y-5" style={{ "--delay": "190ms" } as React.CSSProperties}>
+      <PanelCard className="content-visibility-auto space-y-5" style={{ "--delay": "190ms" } as React.CSSProperties}>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex items-start gap-3">
             <IconBadge tone="brand">
               <CalendarDays className="h-5 w-5" />
             </IconBadge>
             <div>
-              <h3 className="text-lg font-semibold text-[var(--foreground)] sm:text-xl">
+              <Typography as="h3" variant="card-title" className="text-[var(--foreground)]">
                 {savedPlan ? "Kế hoạch đã lưu" : "Chưa có kế hoạch đã lưu"}
-              </h3>
+              </Typography>
               <p className="mt-1 text-sm text-[var(--muted)]">
                 {plannerTerm}
                 {savedPlan ? ` · ${planCredits} tín chỉ đã lưu` : ""}
@@ -425,10 +564,10 @@ export function DashboardPanel({
       </PanelCard>
 
       <div className="grid gap-3 sm:gap-5 xl:grid-cols-[0.9fr_1.1fr]">
-        <PanelCard className="space-y-4" style={{ "--delay": "240ms" } as React.CSSProperties}>
+        <PanelCard className="content-visibility-auto space-y-4" style={{ "--delay": "240ms" } as React.CSSProperties}>
           <div className="flex items-start justify-between gap-3">
             <div>
-              <h3 className="text-lg font-semibold text-[var(--foreground)] sm:text-xl">Tiến độ chương trình đào tạo</h3>
+              <Typography as="h3" variant="card-title" className="text-[var(--foreground)]">Tiến độ chương trình đào tạo</Typography>
               <p className="mt-1 text-sm text-[var(--muted)]">{program.name} · {program.totalCredits} tín chỉ</p>
             </div>
             <IconBadge tone="brand">
@@ -462,10 +601,10 @@ export function DashboardPanel({
           </div>
         </PanelCard>
 
-        <PanelCard className="space-y-4" style={{ "--delay": "300ms" } as React.CSSProperties}>
+        <PanelCard className="content-visibility-auto space-y-4" style={{ "--delay": "300ms" } as React.CSSProperties}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <h3 className="text-lg font-semibold text-[var(--foreground)] sm:text-xl">Dự báo GPA theo học kỳ</h3>
+              <Typography as="h3" variant="card-title" className="text-[var(--foreground)]">Dự báo GPA theo học kỳ</Typography>
               <p className="mt-1 text-sm text-[var(--muted)]">Theo dõi xu hướng để điều chỉnh nhịp học sớm hơn.</p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
