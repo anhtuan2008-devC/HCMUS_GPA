@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -35,6 +35,7 @@ export function AuthForm({
 }>) {
   const router = useRouter();
   const [mode, setMode] = useState<AuthMode>(initialMode);
+  const [isRoutePending, startRouteTransition] = useTransition();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -84,8 +85,16 @@ export function AuthForm({
   }
 
   function changeMode(nextMode: AuthMode) {
+    if (nextMode === mode || isRoutePending) {
+      return;
+    }
+
     setMode(nextMode);
-    router.replace(nextMode === "sign-up" ? "/dang-ky" : "/dang-nhap");
+    setErrorMessage(null);
+    setInfoMessage(null);
+    startRouteTransition(() => {
+      router.replace(nextMode === "sign-up" ? "/dang-ky" : "/dang-nhap");
+    });
   }
 
   const authSignals = [
@@ -151,13 +160,24 @@ export function AuthForm({
             </span>
           </div>
 
-          <div className="flex items-center gap-2 rounded-full border border-[var(--line)] bg-white/75 p-1">
+          <div className="relative grid grid-cols-2 items-center rounded-full border border-[var(--line)] bg-white/75 p-1">
+            <span
+              aria-hidden="true"
+              className="absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-full bg-[var(--brand-primary)] shadow-[0_10px_28px_rgba(0,63,136,0.24)] transition-transform duration-300 ease-out"
+              style={{
+                transform:
+                  mode === "sign-up"
+                    ? "translateX(calc(100% + 0.25rem))"
+                    : "translateX(0)",
+              }}
+            />
             <button
               type="button"
               onClick={() => changeMode("sign-in")}
-              className={`flex-1 rounded-full px-3 py-2 text-sm font-semibold transition sm:px-4 ${
+              aria-pressed={mode === "sign-in"}
+              className={`relative z-10 rounded-full px-3 py-2 text-sm font-semibold transition-colors duration-200 sm:px-4 ${
                 mode === "sign-in"
-                  ? "bg-[var(--brand-primary)] text-white shadow-[0_10px_28px_rgba(0,63,136,0.24)]"
+                  ? "text-white"
                   : "text-[var(--muted)] hover:bg-white"
               }`}
             >
@@ -166,9 +186,10 @@ export function AuthForm({
             <button
               type="button"
               onClick={() => changeMode("sign-up")}
-              className={`flex-1 rounded-full px-3 py-2 text-sm font-semibold transition sm:px-4 ${
+              aria-pressed={mode === "sign-up"}
+              className={`relative z-10 rounded-full px-3 py-2 text-sm font-semibold transition-colors duration-200 sm:px-4 ${
                 mode === "sign-up"
-                  ? "bg-[var(--brand-primary)] text-white shadow-[0_10px_28px_rgba(0,63,136,0.24)]"
+                  ? "text-white"
                   : "text-[var(--muted)] hover:bg-white"
               }`}
             >
@@ -176,7 +197,7 @@ export function AuthForm({
             </button>
           </div>
 
-          <div className="mt-5 sm:mt-7">
+          <div className="mt-5 min-h-[6.5rem] transition-opacity duration-200 sm:mt-7 sm:min-h-[7.25rem]">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted)] sm:text-sm sm:tracking-[0.2em]">
               {mode === "sign-in" ? "Chào mừng trở lại" : "Bắt đầu mới"}
             </p>
@@ -236,18 +257,13 @@ export function AuthForm({
             </Button>
           </form>
 
-          <div className="mt-5 grid grid-cols-2 gap-2 text-xs sm:gap-3 sm:text-sm">
-            {authSignals.map((signal) => {
-              const SignalIcon = signal.icon;
-
-              return (
-                <article key={signal.label} className="rounded-[1rem] border border-[var(--line)] bg-white/68 p-3 sm:rounded-[1.25rem]">
-                  <SignalIcon className="h-4 w-4 text-[var(--brand-primary)]" />
-                  <p className="mt-2 font-semibold text-[var(--foreground)]">{signal.label}</p>
-                  <p className="mt-1 hidden leading-5 text-[var(--muted)] sm:block">{signal.description}</p>
-                </article>
-              );
-            })}
+          <div className="mt-5 rounded-[1.15rem] border border-[var(--line)] bg-[var(--surface-tint)] p-3 lg:hidden">
+            <div className="flex items-start gap-3">
+              <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[var(--brand-primary)]" />
+              <p className="text-xs leading-5 text-[var(--muted)] sm:text-sm sm:leading-6">
+                Dữ liệu học tập chỉ thuộc về tài khoản của bạn. Đăng nhập xong, bạn sẽ quay lại không gian GPA cá nhân.
+              </p>
+            </div>
           </div>
 
           <p className="mt-5 text-sm text-[var(--muted)]">

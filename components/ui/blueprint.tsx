@@ -273,30 +273,62 @@ export function CurriculumMap({
   sections: Array<{
     id: string;
     title: string;
+    category?: string;
     totalCredits: number;
     requiredCredits?: number;
     electiveCredits?: number;
     freeElectiveCredits?: number;
+    countsTowardProgramTotal?: boolean;
+    sourceNote?: string;
   }>;
   className?: string;
 }>) {
   return (
     <div className={clsx("curriculum-map", className)}>
-      {sections.map((section, index) => (
-        <article key={section.id} className="curriculum-map-node">
-          <span className="curriculum-map-index">{index + 1}</span>
-          <Typography variant="card-title" className="line-clamp-2 text-[var(--foreground)]">
-            {section.title}
-          </Typography>
-          <Typography variant="metric-md" className="mt-2 text-[var(--brand-primary)]">
-            {section.totalCredits} TC
-          </Typography>
-          <Typography variant="caption" className="mt-1 text-[var(--muted)]">
-            {(section.requiredCredits ?? 0)} BB · {(section.electiveCredits ?? 0)} tự chọn ·{" "}
-            {(section.freeElectiveCredits ?? 0)} TCTD
-          </Typography>
-        </article>
-      ))}
+      {sections.map((section, index) => {
+        const requiredCredits = section.requiredCredits ?? 0;
+        const electiveCredits = section.electiveCredits ?? 0;
+        const freeElectiveCredits = section.freeElectiveCredits ?? 0;
+        const isMajorSection = section.category === "major";
+
+        return (
+          <article key={section.id} className="curriculum-map-node">
+            <div className="curriculum-map-head">
+              <span className="curriculum-map-index">{index + 1}</span>
+              <span className="curriculum-map-total">{section.totalCredits} TC</span>
+            </div>
+            <Typography
+              variant="card-title"
+              className="mt-3 line-clamp-2 text-[var(--foreground)]"
+              title={section.title}
+            >
+              {section.title}
+            </Typography>
+            <div className="curriculum-map-credit-row">
+              <span className={clsx("curriculum-map-chip", requiredCredits ? "is-primary" : "is-muted")}>
+                {requiredCredits} BB
+              </span>
+              <span className={clsx("curriculum-map-chip", electiveCredits ? "is-choice" : "is-muted")}>
+                {electiveCredits} tự chọn
+              </span>
+              <span className={clsx("curriculum-map-chip", freeElectiveCredits ? "is-free" : "is-muted")}>
+                {freeElectiveCredits} TCTD
+              </span>
+            </div>
+            <Typography
+              variant="caption"
+              className="curriculum-map-note text-[var(--muted)]"
+              title={isMajorSection ? "Theo dõi tổng CTĐT, chưa khóa hướng chuyên ngành." : section.sourceNote}
+            >
+              {isMajorSection
+                ? "Theo dõi tổng CTĐT, chưa khóa hướng chuyên ngành."
+                : section.countsTowardProgramTotal === false
+                  ? "Điều kiện riêng, không cộng tổng tín chỉ chính."
+                  : section.sourceNote ?? "Tính vào tổng tín chỉ tốt nghiệp."}
+            </Typography>
+          </article>
+        );
+      })}
     </div>
   );
 }

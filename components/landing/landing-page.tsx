@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, BookOpenCheck, LineChart, Sparkles } from "lucide-react";
+import { ArrowRight, BookOpenCheck, CalendarCheck, LineChart, Sparkles, Target } from "lucide-react";
 import { AcademicCanvasScene } from "@/components/visual/academic-canvas-scene";
 import { Typography, VectorBadge } from "@/components/ui";
 
@@ -52,10 +52,47 @@ const cockpitMetrics = [
 ];
 
 const journeySteps = [
-  "Chọn chương trình học",
-  "Ghi nhận kết quả thật",
-  "Lập kế hoạch kỳ tới",
-  "Dự báo mục tiêu GPA",
+  {
+    title: "Chọn CTĐT",
+    helper: "Khóa 2024",
+    variant: "map" as const,
+  },
+  {
+    title: "Nhập kết quả",
+    helper: "Theo học kỳ",
+    variant: "wave" as const,
+  },
+  {
+    title: "Lập kế hoạch",
+    helper: "Môn kỳ tới",
+    variant: "path" as const,
+  },
+  {
+    title: "Dự báo GPA",
+    helper: "Mục tiêu rõ",
+    variant: "grid" as const,
+  },
+];
+
+const blueprintNodes = [
+  {
+    label: "GPA",
+    value: "8.36",
+    helper: "hệ 10",
+    icon: Target,
+  },
+  {
+    label: "Tín chỉ",
+    value: "43/138",
+    helper: "đã tích lũy",
+    icon: BookOpenCheck,
+  },
+  {
+    label: "Kỳ tới",
+    value: "HK2",
+    helper: "đang thiết kế",
+    icon: CalendarCheck,
+  },
 ];
 
 export function LandingPage() {
@@ -92,10 +129,10 @@ export function LandingPage() {
             <div className="flex flex-wrap gap-3">
               <Link
                 href="/dang-ky"
-                className="inline-flex min-h-10 items-center justify-center gap-2 rounded-full bg-[var(--brand-primary)] px-4 py-2.5 text-sm font-semibold !text-white shadow-[0_14px_34px_rgba(0,63,136,0.26)] transition hover:bg-[var(--brand-primary-strong)] sm:px-5 sm:py-3"
+                className="landing-primary-cta inline-flex min-h-10 items-center justify-center gap-2 rounded-full bg-[var(--brand-primary)] px-4 py-2.5 text-sm font-semibold !text-white shadow-[0_14px_34px_rgba(0,63,136,0.26)] transition-colors hover:bg-[var(--brand-primary-strong)] sm:px-5 sm:py-3"
               >
                 Bắt đầu hành trình
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="landing-cta-arrow h-4 w-4" />
               </Link>
               <Link
                 href="/app/tong-quan"
@@ -117,6 +154,32 @@ export function LandingPage() {
               <p className="relative mt-2 text-sm text-white/70">GPA hệ 4 mục tiêu</p>
               <div className="relative mt-4 rounded-xl border border-white/15 bg-white/10 px-3 py-2.5 text-sm leading-6 text-white/82 sm:mt-6 sm:rounded-2xl sm:px-4 sm:py-3">
                 Tập trung vào môn then chốt, giữ nhịp điểm ổn định và theo dõi tiến độ sau mỗi lần cập nhật.
+              </div>
+              <div className="landing-blueprint-route relative mt-4 grid grid-cols-3 gap-2 sm:mt-5 sm:gap-3">
+                {blueprintNodes.map((node, index) => {
+                  const NodeIcon = node.icon;
+
+                  return (
+                    <article
+                      key={node.label}
+                      className="landing-blueprint-node"
+                      style={{ "--delay": `${index * 120}ms` } as React.CSSProperties}
+                    >
+                      <span className="landing-node-icon">
+                        <NodeIcon className="h-3.5 w-3.5" />
+                      </span>
+                      <span className="mt-2 block text-[0.62rem] font-semibold uppercase tracking-[0.14em] text-white/58">
+                        {node.label}
+                      </span>
+                      <span className="mt-1 block truncate text-sm font-bold tabular-nums text-white" title={node.value}>
+                        {node.value}
+                      </span>
+                      <span className="mt-0.5 block truncate text-[0.68rem] text-white/64" title={node.helper}>
+                        {node.helper}
+                      </span>
+                    </article>
+                  );
+                })}
               </div>
             </div>
             <div className="grid grid-cols-3 gap-2">
@@ -147,15 +210,17 @@ export function LandingPage() {
           <div className="grid gap-2 sm:grid-cols-4 lg:min-w-[38rem]">
             {journeySteps.map((step, index) => (
               <div
-                key={step}
-                className="learning-signal-card rounded-[1rem] border border-[var(--line)] bg-white/78 px-3 py-3"
+                key={step.title}
+                className="landing-flow-step learning-signal-card rounded-[1rem] border border-[var(--line)] bg-white/78 px-3 py-3"
+                style={{ "--delay": `${index * 90}ms` } as React.CSSProperties}
               >
                 <VectorBadge
-                  variant={index % 2 ? "path" : "map"}
-                  className="h-9 w-9 rounded-full bg-[var(--surface-tint)]"
+                  variant={step.variant}
+                  className="landing-flow-icon h-9 w-9 rounded-full bg-[var(--surface-tint)]"
                   title={`Bước ${index + 1}`}
                 />
-                <p className="mt-3 text-sm font-semibold leading-5 text-[var(--foreground)]">{step}</p>
+                <p className="mt-3 text-sm font-semibold leading-5 text-[var(--foreground)]">{step.title}</p>
+                <p className="mt-1 text-xs font-medium text-[var(--muted)]">{step.helper}</p>
               </div>
             ))}
           </div>
@@ -172,7 +237,7 @@ export function LandingPage() {
               className="soft-card motion-card hover-lift rounded-[1.35rem] px-4 py-4 sm:rounded-[2rem] sm:px-5 sm:py-5"
               style={{ "--delay": `${index * 90}ms` } as React.CSSProperties}
             >
-              <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-[var(--brand-primary)] ring-1 ring-blue-100">
+              <span className="landing-feature-icon inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-[var(--brand-primary)] ring-1 ring-blue-100">
                 <Icon className="h-5 w-5" />
               </span>
               <h2 className="mt-4 text-lg font-semibold text-[var(--foreground)] sm:mt-5 sm:text-xl">{item.title}</h2>

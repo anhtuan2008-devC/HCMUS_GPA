@@ -332,8 +332,8 @@ export function GpaCalculationPanel({
             </div>
           </div>
 
-          <div className="overflow-hidden rounded-[1.15rem] border border-[var(--line)] bg-white/78 sm:rounded-[1.5rem]">
-            <div className="grid grid-cols-[minmax(0,1fr)_minmax(7.5rem,0.75fr)] bg-[var(--surface-tint)] px-3 py-2.5 text-sm font-semibold text-[var(--foreground)] sm:grid-cols-[1fr_13rem] sm:px-4 sm:py-3">
+          <div className="blueprint-table-frame">
+            <div className="blueprint-table-header grid grid-cols-[minmax(0,1fr)_minmax(7.5rem,0.75fr)] px-3 py-2.5 text-sm font-semibold text-[var(--foreground)] sm:grid-cols-[1fr_13rem] sm:px-4 sm:py-3">
               <span>Tên mục</span>
               <span className="text-right">Giá trị</span>
             </div>
@@ -341,7 +341,7 @@ export function GpaCalculationPanel({
               {summaryRows.map(([label, value]) => (
                 <div
                   key={label}
-                  className="grid grid-cols-[minmax(0,1fr)_minmax(7.5rem,0.75fr)] gap-2 px-3 py-2.5 text-sm sm:grid-cols-[1fr_13rem] sm:gap-3 sm:px-4 sm:py-3"
+                  className="blueprint-table-row grid grid-cols-[minmax(0,1fr)_minmax(7.5rem,0.75fr)] gap-2 px-3 py-2.5 text-sm sm:grid-cols-[1fr_13rem] sm:gap-3 sm:px-4 sm:py-3"
                 >
                   <span className="text-[var(--foreground)]">{label}</span>
                   <span className="text-right font-semibold tabular-nums text-[var(--foreground)]">
@@ -377,9 +377,9 @@ export function GpaCalculationPanel({
           </label>
         </div>
 
-        <div className="overflow-x-auto rounded-[1.15rem] border border-[var(--line)] bg-white/76 sm:rounded-[1.5rem]">
+        <div className="blueprint-table-frame cockpit-table-scroll">
           <div className="min-w-[62rem] sm:min-w-[70rem]">
-            <div className="grid grid-cols-[7rem_7.5rem_minmax(16rem,1fr)_4.25rem_5.75rem_5.75rem_7rem_minmax(11rem,0.8fr)] gap-2 border-b border-[var(--line)] bg-[var(--surface-tint)] px-3 py-2.5 text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-[var(--muted)] sm:grid-cols-[8rem_8.5rem_minmax(18rem,1fr)_5rem_6.5rem_6.5rem_8rem_minmax(13rem,0.8fr)] sm:gap-3 sm:px-4 sm:py-3 sm:text-xs sm:tracking-[0.14em]">
+            <div className="blueprint-table-header grid grid-cols-[7rem_7.5rem_minmax(16rem,1fr)_4.25rem_5.75rem_5.75rem_7rem_minmax(11rem,0.8fr)] gap-2 px-3 py-2.5 text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-[var(--muted)] sm:grid-cols-[8rem_8.5rem_minmax(18rem,1fr)_5rem_6.5rem_6.5rem_8rem_minmax(13rem,0.8fr)] sm:gap-3 sm:px-4 sm:py-3 sm:text-xs sm:tracking-[0.14em]">
               <span>Mô phỏng</span>
               <span>NH/HK</span>
               <span>Học phần</span>
@@ -399,7 +399,7 @@ export function GpaCalculationPanel({
                   return (
                     <article
                       key={`${row.courseId}-${row.termLabel}`}
-                      className={`grid grid-cols-[7rem_7.5rem_minmax(16rem,1fr)_4.25rem_5.75rem_5.75rem_7rem_minmax(11rem,0.8fr)] items-center gap-2 px-3 py-2.5 text-[0.75rem] transition duration-300 sm:grid-cols-[8rem_8.5rem_minmax(18rem,1fr)_5rem_6.5rem_6.5rem_8rem_minmax(13rem,0.8fr)] sm:gap-3 sm:px-4 sm:py-3 sm:text-sm ${
+                      className={`blueprint-table-row grid grid-cols-[7rem_7.5rem_minmax(16rem,1fr)_4.25rem_5.75rem_5.75rem_7rem_minmax(11rem,0.8fr)] items-center gap-2 px-3 py-2.5 text-[0.75rem] transition-colors duration-300 sm:grid-cols-[8rem_8.5rem_minmax(18rem,1fr)_5rem_6.5rem_6.5rem_8rem_minmax(13rem,0.8fr)] sm:gap-3 sm:px-4 sm:py-3 sm:text-sm ${
                         checked ? "text-[var(--foreground)]" : "bg-slate-50/60 text-[var(--muted)]"
                       } ${row.isSimulationOverride ? "ring-1 ring-inset ring-blue-100" : ""}`}
                     >

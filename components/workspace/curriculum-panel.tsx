@@ -151,7 +151,7 @@ export function CurriculumPanel({
       </section>
 
       <PanelCard className="space-y-3 sm:space-y-4">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div className="flex flex-col gap-2 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted)] sm:text-sm sm:tracking-[0.2em]">
               Chương trình học
@@ -160,15 +160,9 @@ export function CurriculumPanel({
               Theo dõi từng nhóm học phần.
             </Typography>
           </div>
-          <label className="block w-full max-w-md">
-            <span className="mb-2 block text-sm font-medium text-[var(--foreground)]">Tìm theo mã, tên, ghi chú</span>
-            <input
-              value={search}
-              onChange={(event) => onSearchChange(event.target.value)}
-              className="w-full rounded-xl border border-[var(--line)] bg-white/80 px-3 py-2.5 outline-none transition focus:border-[var(--brand-primary)] sm:rounded-2xl sm:px-4 sm:py-3"
-              placeholder="VD: CSC10004, cơ sở dữ liệu..."
-            />
-          </label>
+          <p className="max-w-xl text-sm leading-6 text-[var(--muted)]">
+            Tổng quan CTĐT ở trên, danh sách học phần chi tiết ở bên dưới để bạn tra cứu theo đúng nhịp học.
+          </p>
         </div>
       </PanelCard>
 
@@ -187,40 +181,30 @@ export function CurriculumPanel({
             </p>
           </div>
           <CurriculumMap sections={program.requirementSections} />
-          <div className="grid grid-cols-2 gap-2 sm:gap-3 xl:grid-cols-4">
-            {program.requirementSections.map((section) => (
-              <article
-                key={section.id}
-                className="rounded-[1.15rem] border border-[var(--line)] bg-white/76 p-3 sm:rounded-[1.5rem] sm:p-4"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <h4 className="text-sm font-semibold leading-5 text-[var(--foreground)] sm:text-base sm:leading-6">{section.title}</h4>
-                  <span className="rounded-full bg-[var(--surface-tint)] px-2.5 py-1 text-xs font-bold text-[var(--brand-primary)] ring-1 ring-[var(--line)] sm:px-3 sm:text-sm">
-                    {section.totalCredits} TC
-                  </span>
-                </div>
-                <div className="mt-3 flex flex-wrap gap-1.5 sm:mt-4 sm:gap-2">
-                  <StatusPill
-                    label={`${section.requiredCredits} BB`}
-                    tone={section.requiredCredits ? "success" : "neutral"}
-                  />
-                  {section.electiveCredits ? (
-                    <StatusPill label={`${section.electiveCredits} tự chọn`} tone="warning" />
-                  ) : null}
-                  {section.freeElectiveCredits ? (
-                    <StatusPill label={`${section.freeElectiveCredits} TCTD`} tone="neutral" />
-                  ) : null}
-                </div>
-                {section.category === "major" ? (
-                  <p className="mt-3 text-xs leading-5 text-[var(--muted)]">
-                    Theo dõi tổng CTĐT, chưa khóa hướng chuyên ngành.
-                  </p>
-                ) : null}
-              </article>
-            ))}
-          </div>
         </PanelCard>
       ) : null}
+
+      <PanelCard className="space-y-3 sm:space-y-4">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted)]">
+              Danh sách học phần
+            </p>
+            <h3 className="mt-2 text-lg font-semibold text-[var(--foreground)] sm:text-xl">
+              Tìm nhanh môn cần kiểm tra.
+            </h3>
+          </div>
+          <label className="block w-full max-w-md">
+            <span className="mb-2 block text-sm font-medium text-[var(--foreground)]">Tìm theo mã, tên, ghi chú</span>
+            <input
+              value={search}
+              onChange={(event) => onSearchChange(event.target.value)}
+              className="w-full rounded-xl border border-[var(--line)] bg-white/80 px-3 py-2.5 outline-none transition-colors focus:border-[var(--brand-primary)] sm:rounded-2xl sm:px-4 sm:py-3"
+              placeholder="VD: CSC10004, cơ sở dữ liệu..."
+            />
+          </label>
+        </div>
+      </PanelCard>
 
       {program.courseGroups.map((group) => {
         const courses = program.courses.filter((course) => course.groupId === group.id);
