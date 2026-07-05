@@ -24,11 +24,11 @@ import type {
 } from "@/lib/types";
 
 const studentProfileColumns =
-  "user_id, full_name, student_code, email, start_year, program_id, created_at, updated_at";
+  "user_id, full_name, student_code, email, email_hash, student_code_hash, email_encrypted, student_code_encrypted, start_year, program_id, created_at, updated_at";
 const studentCourseRecordColumns =
   "user_id, course_id, program_course_id, score10, score4, status, term_label, notes, created_at, updated_at";
 const studentCourseAttemptColumns =
-  "id, user_id, course_id, program_course_id, attempt_no, attempt_type, score10, score4, status, term_label, semester, academic_year_start, academic_year_label, grade_input_mode, notes, is_effective, created_at, updated_at";
+  "id, user_id, course_id, program_course_id, attempt_no, attempt_type, score10, score4, score10_encrypted, score4_encrypted, score_hash, status, term_label, semester, academic_year_start, academic_year_label, grade_input_mode, notes, is_effective, created_at, updated_at";
 const studentPreferenceColumns =
   "user_id, current_term_label, semester, academic_year_start, academic_year_label, created_at, updated_at";
 const termPlanColumns =

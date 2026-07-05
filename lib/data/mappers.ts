@@ -35,10 +35,12 @@ type ProgramTermTemplateRow = Database["public"]["Tables"]["program_term_templat
 export function mapAuthenticatedUser(user: {
   id: string;
   email?: string | null;
+  is_anonymous?: boolean | null;
 }): AuthenticatedUser {
   return {
     id: user.id,
     email: user.email ?? null,
+    isGuest: Boolean(user.is_anonymous || !user.email),
   };
 }
 

@@ -7,7 +7,9 @@ import { formatAcademicYearLabel, formatTermLabel, parseAcademicTermLabel } from
 import { errorResponse, jsonError, jsonOk, jsonUnauthorized } from "@/lib/security/api-response";
 import { assertSameOrigin, readJsonStrict } from "@/lib/security/request-guards";
 import { checkMutationRateLimit } from "@/lib/security/rate-limit";
+import { assertPrivacySecretsConfigured, createAttemptPrivacyFields } from "@/lib/security/privacy";
 import type { GradeInputMode } from "@/lib/types";
+import type { StudentCourseAttempt } from "@/lib/types";
 
 const gradeInputModeSchema = z.enum(["numeric", "pass_fail"]);
 const passFailStatusSchema = z.enum(["passed", "failed"]);
@@ -83,6 +85,41 @@ async function loadAttemptPayload(supabase: SupabaseClient, userId: string) {
   });
 }
 
+async function syncAttemptPrivacy(
+  supabase: SupabaseClient,
+  attempt: StudentCourseAttempt | undefined,
+) {
+  if (!attempt) {
+    throw new Error("Không tìm thấy lần học vừa lưu để cập nhật dữ liệu riêng tư.");
+  }
+
+  const privacyFields = createAttemptPrivacyFields({
+    score10: attempt.score10,
+    score4: attempt.score4,
+    status: attempt.status,
+    gradeInputMode: attempt.gradeInputMode,
+  });
+
+  await callMutationRpc(supabase, "save_student_course_attempt_privacy", {
+    p_attempt_id: attempt.id,
+    p_score10_encrypted: privacyFields.score10Encrypted,
+    p_score4_encrypted: privacyFields.score4Encrypted,
+    p_score_hash: privacyFields.scoreHash,
+  });
+}
+
+function findCreatedAttempt(
+  attempts: StudentCourseAttempt[],
+  input: { courseId: string; semester: number; academicYearStart: number },
+) {
+  return attempts.find(
+    (attempt) =>
+      attempt.courseId === input.courseId &&
+      attempt.semester === input.semester &&
+      attempt.academicYearStart === input.academicYearStart,
+  );
+}
+
 async function loadExistingAttempt(
   supabase: SupabaseClient,
   userId: string,
@@ -131,6 +168,7 @@ export async function POST(request: Request) {
       createAttemptSchema,
       "Thông tin điểm học phần chưa hợp lệ.",
     );
+    assertPrivacySecretsConfigured();
     const term = resolveTerm(payload);
 
     await callMutationRpc(supabase, "create_student_course_attempt", {
@@ -142,8 +180,23 @@ export async function POST(request: Request) {
       p_pass_fail_status: payload.passFailStatus ?? null,
       p_notes: payload.notes ?? null,
     });
+    const attempts = await getStudentCourseAttempts(supabase, user.id);
 
-    return jsonOk(await loadAttemptPayload(supabase, user.id));
+    await syncAttemptPrivacy(
+      supabase,
+      findCreatedAttempt(attempts, {
+        courseId: payload.courseId,
+        semester: term.semester,
+        academicYearStart: term.academicYearStart,
+      }),
+    );
+
+    return jsonOk(
+      attemptPayloadDto({
+        attempts,
+        records: deriveEffectiveRecords(attempts),
+      }),
+    );
   } catch (routeError) {
     return errorResponse(routeError, "Chưa lưu được kết quả học phần.");
   }
@@ -164,6 +217,7 @@ export async function PUT(request: Request) {
       updateAttemptSchema,
       "Thông tin cập nhật điểm chưa hợp lệ.",
     );
+    assertPrivacySecretsConfigured();
     const existing = await loadExistingAttempt(supabase, user.id, payload.attemptId);
     const term = resolveTerm({ ...payload, existing });
 
@@ -176,8 +230,19 @@ export async function PUT(request: Request) {
       p_pass_fail_status: payload.passFailStatus ?? null,
       p_notes: payload.notes === undefined ? existing.notes : payload.notes,
     });
+    const attempts = await getStudentCourseAttempts(supabase, user.id);
 
-    return jsonOk(await loadAttemptPayload(supabase, user.id));
+    await syncAttemptPrivacy(
+      supabase,
+      attempts.find((attempt) => attempt.id === payload.attemptId),
+    );
+
+    return jsonOk(
+      attemptPayloadDto({
+        attempts,
+        records: deriveEffectiveRecords(attempts),
+      }),
+    );
   } catch (routeError) {
     return errorResponse(routeError, "Chưa sửa được kết quả học phần.");
   }

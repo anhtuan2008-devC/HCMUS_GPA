@@ -5,6 +5,7 @@ import { callMutationRpc } from "@/lib/data/rpc";
 import { errorResponse, jsonOk, jsonUnauthorized } from "@/lib/security/api-response";
 import { assertSameOrigin, readJsonStrict } from "@/lib/security/request-guards";
 import { checkMutationRateLimit } from "@/lib/security/rate-limit";
+import { assertPrivacySecretsConfigured, createProfilePrivacyFields } from "@/lib/security/privacy";
 
 const profileSchema = z.object({
   fullName: z.string().trim().min(1).max(120),
@@ -40,6 +41,11 @@ export async function PUT(request: Request) {
     assertSameOrigin(request);
     await checkMutationRateLimit(supabase, request, user.id, "profile:save", 20);
     const payload = await readJsonStrict(request, profileSchema, "Thông tin hồ sơ chưa hợp lệ.");
+    assertPrivacySecretsConfigured();
+    const privacyFields = createProfilePrivacyFields({
+      email: payload.email,
+      studentCode: payload.studentCode,
+    });
 
     await callMutationRpc(supabase, "save_student_profile", {
       p_full_name: payload.fullName,
@@ -47,6 +53,13 @@ export async function PUT(request: Request) {
       p_email: payload.email,
       p_start_year: payload.startYear,
       p_program_id: payload.programId,
+    });
+
+    await callMutationRpc(supabase, "save_student_profile_privacy", {
+      p_email_hash: privacyFields.emailHash,
+      p_student_code_hash: privacyFields.studentCodeHash,
+      p_email_encrypted: privacyFields.emailEncrypted,
+      p_student_code_encrypted: privacyFields.studentCodeEncrypted,
     });
 
     return jsonOk({ profile: profileDto(await getStudentProfile(supabase, user.id)) });

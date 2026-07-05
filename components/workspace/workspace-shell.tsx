@@ -102,12 +102,14 @@ const navItems: Array<{
 ];
 
 function createProfileDraft(snapshot: WorkspaceSnapshot): ProfileDraft {
+  const guestEmail = `guest-${snapshot.user.id.slice(0, 8)}@guest.hcmus.local`;
+
   return {
-    fullName: snapshot.profile?.fullName ?? "",
-    studentCode: snapshot.profile?.studentCode ?? "",
-    email: snapshot.profile?.email ?? snapshot.user.email ?? "",
-    startYear: snapshot.profile?.startYear ?? 2024,
-    programId: snapshot.profile?.programId ?? snapshot.programs[0]?.id ?? "",
+    fullName: snapshot.profile?.fullName || "",
+    studentCode: snapshot.profile?.studentCode || "",
+    email: snapshot.profile?.email || snapshot.user.email || (snapshot.user.isGuest ? guestEmail : ""),
+    startYear: snapshot.profile?.startYear || 2024,
+    programId: snapshot.profile?.programId || snapshot.programs[0]?.id || "",
   };
 }
 
@@ -904,6 +906,11 @@ export function WorkspaceShell({
               <span className="text-2xl font-bold tracking-tight text-blue-200">GPA</span>
             </div>
             <p className="mt-1 text-sm text-white/68">Tự quản lý kết quả học tập</p>
+            {snapshot.user.isGuest ? (
+              <span className="mt-3 inline-flex rounded-full border border-white/16 bg-white/12 px-3 py-1 text-xs font-semibold text-blue-50">
+                Phiên khách tạm thời
+              </span>
+            ) : null}
           </div>
 
           {showNavigation ? (
@@ -942,7 +949,9 @@ export function WorkspaceShell({
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold">{displayName}</p>
                 <p className="truncate text-xs text-white/62">
-                  {snapshot.profile?.studentCode || snapshot.user.email || "Chưa tạo hồ sơ"}
+                  {snapshot.profile?.studentCode ||
+                    snapshot.user.email ||
+                    (snapshot.user.isGuest ? "Dữ liệu sẽ xóa khi đăng xuất" : "Chưa tạo hồ sơ")}
                 </p>
               </div>
             </div>
@@ -1191,6 +1200,7 @@ export function WorkspaceShell({
             <OnboardingPanel
               draft={profileDraft}
               programs={snapshot.programs}
+              isGuest={snapshot.user.isGuest}
               isSaving={isProfileSaving}
               onChange={updateProfileDraft}
               onSubmit={handleSaveProfile}

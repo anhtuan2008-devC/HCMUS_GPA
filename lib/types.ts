@@ -41,6 +41,7 @@ export type DashboardPageKey = "overview" | "gpa-calculation";
 export interface AuthenticatedUser {
   id: string;
   email: string | null;
+  isGuest: boolean;
 }
 
 export interface ProgramSummary {

@@ -251,6 +251,10 @@ export interface Database {
           full_name: string;
           student_code: string;
           email: string;
+          email_hash: string | null;
+          student_code_hash: string | null;
+          email_encrypted: string | null;
+          student_code_encrypted: string | null;
           start_year: number;
           program_id: string;
           created_at: string;
@@ -299,6 +303,9 @@ export interface Database {
           attempt_type: AttemptType;
           score10: number | null;
           score4: number | null;
+          score10_encrypted: string | null;
+          score4_encrypted: string | null;
+          score_hash: string | null;
           status: Exclude<RecordStatus, "planned">;
           term_label: string;
           semester: number;

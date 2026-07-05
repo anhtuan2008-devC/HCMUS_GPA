@@ -14,12 +14,14 @@ interface ProfileDraft {
 export function OnboardingPanel({
   draft,
   programs,
+  isGuest = false,
   isSaving,
   onChange,
   onSubmit,
 }: Readonly<{
   draft: ProfileDraft;
   programs: ProgramSummary[];
+  isGuest?: boolean;
   isSaving: boolean;
   onChange: (field: keyof ProfileDraft, value: string | number) => void;
   onSubmit: () => void;
@@ -70,7 +72,11 @@ export function OnboardingPanel({
         <div className="rounded-[1.15rem] border border-[var(--line)] bg-[var(--surface-tint)] px-3 py-3 text-sm leading-7 text-[var(--muted)] sm:rounded-[1.5rem] sm:px-4 sm:py-4">
           <div className="flex gap-2">
             <ShieldCheck className="mt-1 h-4 w-4 shrink-0 text-[var(--brand-primary)]" />
-            <p>Sau khi lưu, chương trình đào tạo sẽ được khóa để tránh nhập nhầm dữ liệu về sau.</p>
+            <p>
+              {isGuest
+                ? "Bạn đang dùng phiên khách. Hồ sơ và điểm thử sẽ được xóa khi đăng xuất."
+                : "Sau khi lưu, chương trình đào tạo sẽ được khóa để tránh nhập nhầm dữ liệu về sau."}
+            </p>
           </div>
         </div>
       </div>
@@ -113,14 +119,23 @@ export function OnboardingPanel({
           />
         </Field>
 
-        <Field label="Email">
-          <TextInput
-            type="email"
-            value={draft.email}
-            onChange={(event) => onChange("email", event.target.value)}
-            placeholder="ban@hcmus.edu.vn"
-          />
-        </Field>
+        {isGuest ? (
+          <div className="rounded-[1.15rem] border border-[var(--line)] bg-[var(--surface-tint)] px-3 py-3 text-sm leading-6 text-[var(--muted)]">
+            <p className="font-semibold text-[var(--foreground)]">Không cần email tài khoản</p>
+            <p className="mt-1">
+              Phiên khách chỉ cần tên hiển thị và MSSV/mã thử để cá nhân hóa dữ liệu tạm.
+            </p>
+          </div>
+        ) : (
+          <Field label="Email">
+            <TextInput
+              type="email"
+              value={draft.email}
+              onChange={(event) => onChange("email", event.target.value)}
+              placeholder="ban@hcmus.edu.vn"
+            />
+          </Field>
+        )}
 
         <Field label="Khóa tuyển">
           <TextInput

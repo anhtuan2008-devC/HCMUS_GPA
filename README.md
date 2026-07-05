@@ -27,7 +27,13 @@ Tạo `.env.local` từ `.env.example`:
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
 NEXT_PUBLIC_SITE_URL=http://127.0.0.1:3000
+DATA_HASH_PEPPER=
+DATA_ENCRYPTION_KEY=
 ```
+
+`DATA_HASH_PEPPER` và `DATA_ENCRYPTION_KEY` là secret server-only, không dùng tiền tố
+`NEXT_PUBLIC_*`. Development có fallback để chạy local, nhưng production cần cấu hình hai
+biến này trên Vercel trước khi lưu hồ sơ/điểm.
 
 ## Supabase CLI
 
@@ -43,6 +49,7 @@ Repo đang dùng các migration chính:
 - `supabase/migrations/202607010008_force_rls_and_audit_indexes.sql`
 - `supabase/migrations/202607010009_credit_policy_and_curriculum_requirements.sql`
 - `supabase/migrations/202607010010_performance_security_maintenance.sql`
+- `supabase/migrations/202607010011_guest_privacy.sql`
 
 Khi cần link CLI với project `oifouqndjignfhtorbep`:
 
@@ -56,6 +63,10 @@ Sau khi cập nhật migration, đẩy lên Supabase thật trước khi test ap
 ```bash
 pnpm dlx supabase@latest db push
 ```
+
+Chế độ `Dùng thử với khách` dùng Supabase Anonymous Sign-ins. Với project hosted,
+bật thêm trong Supabase Dashboard: `Authentication > Providers > Anonymous sign-ins`.
+Phiên khách vẫn đi qua RLS như user đăng nhập, nhưng workspace data sẽ bị xóa khi đăng xuất.
 
 ## Seed curriculum từ docs
 
@@ -111,12 +122,15 @@ Vercel phù hợp với repo này vì app dùng Next.js SSR, API routes và Supa
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
 NEXT_PUBLIC_SITE_URL=https://<ten-du-an>.vercel.app
+DATA_HASH_PEPPER=
+DATA_ENCRYPTION_KEY=
 ```
 
 4. Trong Supabase Auth, cấu hình:
 
 - Site URL: `https://<ten-du-an>.vercel.app`
 - Additional Redirect URLs: `http://localhost:3000/**`, `https://<ten-du-an>.vercel.app/**`
+- Anonymous Sign-ins: bật nếu muốn dùng nút `Dùng thử với khách`.
 
 5. Deploy production trên Vercel, sau đó smoke test landing, đăng ký/đăng nhập, onboarding, dashboard, planner và GPA Lab.
 

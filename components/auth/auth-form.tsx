@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ArrowRight, GraduationCap, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, GraduationCap, ShieldCheck, Sparkles, UserRound } from "lucide-react";
 import { Button, Field, TextInput } from "@/components/ui";
 import { DEFAULT_APP_PATH } from "@/lib/app-routes";
 
@@ -39,6 +39,7 @@ export function AuthForm({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGuestSubmitting, setIsGuestSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [infoMessage, setInfoMessage] = useState<string | null>(null);
 
@@ -81,6 +82,34 @@ export function AuthForm({
       );
     } finally {
       setIsSubmitting(false);
+    }
+  }
+
+  async function handleGuestSignIn() {
+    setIsGuestSubmitting(true);
+    setErrorMessage(null);
+    setInfoMessage(null);
+
+    try {
+      const response = await fetch("/api/auth/guest", {
+        method: "POST",
+        credentials: "include",
+      });
+      const payload = (await response.json()) as {
+        message?: string;
+        hasSession?: boolean;
+        isGuest?: boolean;
+      };
+
+      if (!response.ok || !payload.hasSession) {
+        setErrorMessage(payload.message ?? "Chưa mở được phiên khách. Bạn thử lại sau nhé.");
+        return;
+      }
+
+      router.replace(DEFAULT_APP_PATH);
+      router.refresh();
+    } finally {
+      setIsGuestSubmitting(false);
     }
   }
 
@@ -244,7 +273,7 @@ export function AuthForm({
 
             <Button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || isGuestSubmitting}
               size="lg"
               className="w-full"
             >
@@ -256,6 +285,23 @@ export function AuthForm({
               {!isSubmitting ? <ArrowRight className="h-4 w-4" /> : null}
             </Button>
           </form>
+
+          <div className="mt-4 rounded-[1.2rem] border border-[var(--line)] bg-white/70 p-3">
+            <Button
+              type="button"
+              variant="secondary"
+              size="lg"
+              disabled={isSubmitting || isGuestSubmitting}
+              className="w-full"
+              onClick={handleGuestSignIn}
+            >
+              {isGuestSubmitting ? "Đang mở phiên khách..." : "Dùng thử với khách"}
+              {!isGuestSubmitting ? <UserRound className="h-4 w-4" /> : null}
+            </Button>
+            <p className="mt-2 text-center text-xs leading-5 text-[var(--muted)]">
+              Không cần tài khoản. Hồ sơ, điểm thử và kế hoạch sẽ xóa khi bạn đăng xuất.
+            </p>
+          </div>
 
           <div className="mt-5 rounded-[1.15rem] border border-[var(--line)] bg-[var(--surface-tint)] p-3 lg:hidden">
             <div className="flex items-start gap-3">

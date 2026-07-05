@@ -1,6 +1,6 @@
-import { createHash } from "node:crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/database";
+import { privacyHash } from "@/lib/security/privacy";
 import { PublicRequestError } from "@/lib/security/request-guards";
 
 type RateLimitRpcClient = {
@@ -20,7 +20,7 @@ export function requestIp(request: Request) {
 }
 
 export function hashIdentifier(value: string) {
-  return createHash("sha256").update(value.trim().toLowerCase()).digest("hex");
+  return privacyHash(value, "rate-limit.identifier");
 }
 
 function isMissingRateLimitFunction(error: { code?: string; message: string }) {
